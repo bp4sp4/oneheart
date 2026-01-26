@@ -1,0 +1,102 @@
+.container {
+    max-width: 560px;
+    margin: 0 auto;
+    padding: 20px;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #f8f9fa;
+}
+
+.failCard {
+    background: white;
+    border-radius: 16px;
+    padding: 40px 24px;
+    text-align: center;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    max-width: 400px;
+}
+
+.failIcon {
+    font-size: 64px;
+    margin-bottom: 24px;
+}
+
+.failTitle {
+    font-size: 24px;
+    font-weight: 600;
+    color: #dc3545;
+    margin: 0 0 12px 0;
+}
+
+.failMessage {
+    font-size: 16px;
+    color: #6c757d;
+    margin: 0 0 32px 0;
+}
+
+.errorDetails {
+    background: #f8f9fa;
+    border-radius: 8px;
+    padding: 20px;
+    margin-bottom: 32px;
+}
+
+.detailItem {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+    font-size: 14px;
+}
+
+.detailItem:last-child {
+    margin-bottom: 0;
+}
+
+.detailItem span:first-child {
+    color: #6c757d;
+}
+
+.detailItem span:last-child {
+    font-weight: 600;
+    color: #212529;
+}
+
+.buttonGroup {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.retryButton {
+    background: #2B7FFF;
+    color: white;
+    padding: 16px 24px;
+    border-radius: 8px;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 16px;
+    transition: background-color 0.2s;
+}
+
+.retryButton:hover {
+    background: #1a6be6;
+}
+
+.homeButton {
+    background: #6c757d;
+    color: white;
+    padding: 16px 24px;
+    border-radius: 8px;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 16px;
+    transition: background-color 0.2s;
+}
+
+.homeButton:hover {
+    background: #5a6268;
+}

@@ -8,7 +8,7 @@ export default function HomePage() {
         <p>테스트에 오신 것을 환영합니다. 간단한 질문지를 통해 유형을 확인할 수 있습니다.</p>
 
         <div style={{ marginTop: 24, display: 'flex', gap: 12 }}>
-          <Link href="/pay"><button style={{ padding: '10px 14px' }}>결제 후 테스트 시작</button></Link>
+          <Link href="/payment"><button style={{ padding: '10px 14px' }}>결제 후 테스트 시작</button></Link>
           <Link href="/quiz"><button style={{ padding: '10px 14px' }}>결제 없이 바로 보기 (개발용)</button></Link>
         </div>
 

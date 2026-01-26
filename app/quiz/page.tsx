@@ -17,7 +17,7 @@ export default function QuizPage() {
     if (pay === 'success') {
       const orderNo = orderNoQuery
       if (!orderNo) {
-        router.push('/pay')
+        router.push('/payment')
         return
       }
 
@@ -28,10 +28,10 @@ export default function QuizPage() {
           const rec = json?.record
           // allow only if record exists and status indicates payment complete
           if (!json?.found || !rec || !rec.status || !rec.status.includes('PAY_COMPLETE')) {
-            router.push('/pay')
+            router.push('/payment')
           }
         } catch (e) {
-          router.push('/pay')
+          router.push('/payment')
         }
       })()
     }
