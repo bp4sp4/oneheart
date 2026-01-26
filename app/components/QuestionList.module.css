@@ -1,0 +1,62 @@
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.item {
+  background: #fff;
+  border: 1px solid #e6eef8;
+  padding: 10px;
+  border-radius: 6px;
+}
+/* unanswered state: slightly faded */
+.unanswered {
+  opacity: 0.55;
+}
+.answered {
+  background: linear-gradient(90deg, #f6fffb 0%, #ffffff 100%);
+  border-color: #c8f7e6;
+}
+
+.active {
+  background: #ffffff;
+  border-color: #10b981;
+  box-shadow: 0 6px 18px rgba(16,185,129,0.06);
+}
+.row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.qindex {
+  width: 28px;
+  font-weight: 600;
+}
+.qtext {
+  flex: 1;
+}
+.revbtn {
+  display: none;
+}
+.options {
+  margin-top: 8px;
+  display: flex;
+  gap: 8px;
+}
+.option {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.optLabel {
+  font-size: 13px;
+}
+
+.unanswered .optLabel {
+  color: #9aa6b2;
+}
+
+.answered .optLabel {
+  color: #0b6b4f;
+  font-weight: 600;
+}

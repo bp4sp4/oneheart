@@ -1,0 +1,10 @@
+.box {
+  border: 1px dashed #d1d5db;
+  padding: 12px;
+  border-radius: 6px;
+  background: #ffffff;
+  color: #111827;
+}
+.box ul {
+  margin: 8px 0 0 16px;
+}

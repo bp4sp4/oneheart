@@ -1,0 +1,9 @@
+.results {
+  border-left: 3px solid #2563eb;
+  padding: 12px 16px;
+  margin-top: 16px;
+  background: #ffffff;
+}
+.results h3 {
+  margin: 0 0 8px 0;
+}

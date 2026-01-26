@@ -1,0 +1,19 @@
+.header {
+  background: linear-gradient(90deg, #fff, #f7f9fc);
+  border-bottom: 1px solid #e6eef8;
+}
+.container {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 20px 16px;
+}
+.title {
+  margin: 0;
+  font-size: 20px;
+  color: #111827;
+}
+.subtitle {
+  margin: 4px 0 0 0;
+  font-size: 13px;
+  color: #374151;
+}

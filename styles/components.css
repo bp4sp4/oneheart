@@ -1,0 +1,6 @@
+/* Global component baseline styles */
+button {
+  font: inherit;
+}
+
+h1,h2,h3,h4 { color: #0f172a }
