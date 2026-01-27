@@ -2,26 +2,15 @@
 
 import { useState, Suspense, useEffect } from "react";
 import { useSearchParams } from "next/navigation";
-import styles from "./checkout.module.css";
 
 // 로딩 컴포넌트
 function CheckoutLoading() {
   return (
-    <div className={styles.container}>
-      <header className={styles.header}>
-        <button
-          onClick={() => (window.location.href = "/")}
-          className={styles.backButton}
-          style={{ background: "none", border: "none", cursor: "pointer" }}
-        >
-          ←
-        </button>
-        <h1 className={styles.headerTitle}>결제진행</h1>
-        <div className={styles.headerSpacer}></div>
-      </header>
-      <div style={{ padding: "20px", textAlign: "center" }}>
-        <p>로딩 중...</p>
-      </div>
+    <div style={{ 
+      textAlign: 'center', 
+      padding: '100px 20px' 
+    }}>
+      <p>로딩 중...</p>
     </div>
   );
 }
@@ -141,52 +130,49 @@ function CheckoutContent() {
   };
 
   return (
-    <div className={styles.container}>
-      {/* 헤더 */}
-      <header className={styles.header}>
-        <button
-          onClick={() => {
-            window.location.href = "/payment";
-          }}
-          className={styles.backButton}
-          style={{ background: "none", border: "none", cursor: "pointer" }}
-        >
-          ←
-        </button>
-        <h1 className={styles.headerTitle}>결제진행</h1>
-        <div className={styles.headerSpacer}></div>
-      </header>
+    <div style={{ 
+      maxWidth: '400px', 
+      margin: '100px auto', 
+      padding: '40px 20px',
+      textAlign: 'center'
+    }}>
+      <h1 style={{ 
+        fontSize: '24px', 
+        marginBottom: '20px',
+        color: '#333'
+      }}>
+        {currentData.title}
+      </h1>
+      
+      <p style={{ 
+        fontSize: '32px', 
+        fontWeight: 'bold',
+        marginBottom: '40px',
+        color: '#2B7FFF'
+      }}>
+        ₩{currentData.price.toLocaleString()}
+      </p>
 
-      {/* 상품 정보 */}
-      <div className={styles.productSection}>
-        <div className={styles.productItem}>
-          <div className={styles.productImage}>
-            <div className={styles.imagePlaceholder}>
-              <span>📚</span>
-            </div>
-          </div>
-          <div className={styles.productInfo}>
-            <h3 className={styles.productTitle}>{currentData.title}</h3>
-            <p className={styles.productInstructor}>{currentData.instructor}</p>
-            <div className={styles.productType}>
-              <span className={styles.typeBadge}>{currentData.type}</span>
-            </div>
-            <div className={styles.productPrice}>
-              <span className={styles.finalPrice}>
-                ₩{currentData.price.toLocaleString()}
-              </span>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* 결제 안내 */}
       {paymentError && (
-        <div className={styles.errorMessage}>
+        <div style={{ 
+          color: 'red', 
+          marginBottom: '20px',
+          padding: '10px',
+          background: '#fee',
+          borderRadius: '4px'
+        }}>
           <p>{paymentError}</p>
           <button
-            className={styles.retryButton}
             onClick={() => window.location.reload()}
+            style={{
+              marginTop: '10px',
+              padding: '8px 16px',
+              background: '#2B7FFF',
+              color: 'white',
+              border: 'none',
+              borderRadius: '4px',
+              cursor: 'pointer'
+            }}
           >
             다시 시도
           </button>
@@ -194,18 +180,29 @@ function CheckoutContent() {
       )}
 
       {!paymentError && !isPaymentReady && (
-        <div className={styles.loadingMessage}>
-          <p>결제 시스템을 준비하고 있습니다...</p>
-        </div>
+        <p style={{ color: '#666' }}>결제 시스템을 준비하고 있습니다...</p>
       )}
 
-      {/* 결제 버튼 */}
       {isPaymentReady && !paymentError && (
-        <div className={styles.paymentButtonSection}>
-          <button className={styles.paymentButton} onClick={handlePayment}>
-            결제하기
-          </button>
-        </div>
+        <button 
+          onClick={handlePayment}
+          style={{
+            width: '100%',
+            padding: '16px',
+            fontSize: '18px',
+            fontWeight: 'bold',
+            background: '#2B7FFF',
+            color: 'white',
+            border: 'none',
+            borderRadius: '8px',
+            cursor: 'pointer',
+            transition: 'background 0.2s'
+          }}
+          onMouseOver={(e) => e.currentTarget.style.background = '#1a6be6'}
+          onMouseOut={(e) => e.currentTarget.style.background = '#2B7FFF'}
+        >
+          결제하기
+        </button>
       )}
     </div>
   );

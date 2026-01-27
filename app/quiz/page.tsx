@@ -5,6 +5,7 @@ import Header from '../components/Header'
 import QuestionList from '../components/QuestionList'
 import Results from '../components/Results'
 import ShareControls from '../components/ShareControls'
+import styles from './quiz.module.css'
 
 export default function QuizPage() {
   const search = useSearchParams()
@@ -48,16 +49,37 @@ export default function QuizPage() {
     }
   }, [])
 
+  // 랜덤 순서로 문항 섞기 (원본 인덱스 유지) - 클라이언트에서만 실행
+  const [shuffledQuestionsWithIndex, setShuffledQuestionsWithIndex] = useState<Array<{ question: any; originalIndex: number }>>([])
+  const [isMounted, setIsMounted] = useState(false)
+  
+  useEffect(() => {
+    // 클라이언트에서만 랜덤화 실행
+    setShuffledQuestionsWithIndex(
+      allQuestions.map((q, idx) => ({ question: q, originalIndex: idx }))
+        .sort(() => Math.random() - 0.5)
+    )
+    setIsMounted(true)
+  }, [allQuestions])
+
   const [currentPage, setCurrentPage] = useState(0)
   const pageSize = 10
   const [toastMessage, setToastMessage] = useState<string | null>(null)
   const [score, setScore] = useState<number | null>(null)
   const [axisSums, setAxisSums] = useState<number[] | null>(null)
   const [mappingState, setMappingState] = useState<{ code: string; label: string; summary: string } | null>(null)
+  const [isCalculating, setIsCalculating] = useState(false)
+  const [calculatingProgress, setCalculatingProgress] = useState(0)
 
   const questions = allQuestions
-  const totalPages = Math.max(1, Math.ceil(questions.length / pageSize))
-  const pageQuestions = questions.slice(currentPage * pageSize, currentPage * pageSize + pageSize)
+  const shuffledQuestions = shuffledQuestionsWithIndex
+  const totalPages = Math.max(1, Math.ceil(shuffledQuestions.length / pageSize))
+  const pageQuestions = shuffledQuestions.slice(currentPage * pageSize, currentPage * pageSize + pageSize)
+
+  useEffect(() => {
+    // 페이지 변경 시 맨 위로 스크롤
+    window.scrollTo({ top: 0, behavior: 'smooth' })
+  }, [currentPage])
 
   const handleAnswer = (index: number, value: number) => {
     setAnswers((prev) => ({ ...prev, [index]: value }))
@@ -69,11 +91,17 @@ export default function QuizPage() {
     ;(showToast as any)._t = window.setTimeout(() => setToastMessage(null), 3000)
   }
 
+  // 클라이언트 마운트 전에는 로딩 표시
+  if (!isMounted) {
+    return null
+  }
+
   const hasUnansweredOnPage = (page: number) => {
     const start = page * pageSize
     const end = start + pageSize
-    for (let i = start; i < end && i < questions.length; i++) {
-      if (answers[i] === null || answers[i] === undefined) return true
+    for (let i = start; i < end && i < shuffledQuestions.length; i++) {
+      const originalIndex = shuffledQuestions[i].originalIndex
+      if (answers[originalIndex] === null || answers[originalIndex] === undefined) return true
     }
     return false
   }
@@ -119,69 +147,271 @@ export default function QuizPage() {
     ['C', 'T'],
   ]
 
-  const calculateScore = () => {
+  const calculateScore = async () => {
     if (hasAnyUnanswered()) {
       showToast('모든 문항에 응답해 주세요.')
       return
     }
 
-    const sums = [0, 0, 0, 0]
+    // 로딩 시작
+    setIsCalculating(true)
+    setCalculatingProgress(0)
+
+    // 프로그레스 바 애니메이션
+    const duration = 3000 // 3초
+    const interval = 50
+    const steps = duration / interval
+    let step = 0
+
+    const progressInterval = setInterval(() => {
+      step++
+      setCalculatingProgress((step / steps) * 100)
+      if (step >= steps) {
+        clearInterval(progressInterval)
+      }
+    }, interval)
+
+    // 3초 대기
+    await new Promise(resolve => setTimeout(resolve, duration))
+
+    // 축별 카운트와 점수 합계 (각 축별로 25문항씩)
+    const axisCounts = [
+      { positive: 0, negative: 0, sum: 0 }, // A축: R vs E
+      { positive: 0, negative: 0, sum: 0 }, // B축: S vs L
+      { positive: 0, negative: 0, sum: 0 }, // C축: P vs O
+      { positive: 0, negative: 0, sum: 0 }, // D축: C vs T
+    ]
     const axisIndex: Record<string, number> = { a: 0, b: 1, c: 2, d: 3 }
 
-    const total = questions.reduce((acc, q, idx) => {
+    questions.forEach((q, idx) => {
       const val = answers[idx] ?? 0
+      
       const isRev = !!q.reversed
       const v = isRev ? -val : val
       const a = (q.axis && axisIndex[q.axis.toLowerCase()]) ?? Math.floor(idx / 25)
       const axis = typeof a === 'number' ? a : Math.floor(idx / 25)
-      sums[axis] += v
-      return acc + v
-    }, 0)
+      
+      // 점수 합계
+      axisCounts[axis].sum += v
+      
+      // 개수 카운트 (보통이다는 제외)
+      if (v > 0) {
+        axisCounts[axis].positive++
+      } else if (v < 0) {
+        axisCounts[axis].negative++
+      }
+    })
 
-    const letters = sums.map((s, i) => (s > 0 ? axisPairs[i][0] : axisPairs[i][1]))
+    // 각 축에서 더 많은 쪽을 선택 (비율로 판단, 동점이면 점수 합계로 판단)
+    const letters = axisCounts.map((counts, i) => {
+      if (counts.positive > counts.negative) {
+        return axisPairs[i][0] // R, S, P, C
+      } else if (counts.negative > counts.positive) {
+        return axisPairs[i][1] // E, L, O, T
+      } else {
+        // 동점일 때는 점수 합계로 판단
+        return counts.sum >= 0 ? axisPairs[i][0] : axisPairs[i][1]
+      }
+    })
+    
     const code = letters.join('')
     const mapping = codeMap[code] ?? { code, label: code, summary: '' }
 
-    setAxisSums(sums)
-    setScore(total)
-    setMappingState(mapping)
+    // 점수 합계 배열
+    const sums = axisCounts.map(c => c.sum)
+
+    // 결과 페이지로 이동
+    const params = new URLSearchParams({
+      score: '0', // 비율 방식이므로 총점은 의미 없음
+      code: mapping.code,
+      label: mapping.label,
+      summary: mapping.summary,
+      axis: JSON.stringify(sums),
+      counts: JSON.stringify(axisCounts),
+    })
+    router.push(`/result?${params.toString()}`)
   }
 
   return (
     <main>
+      {isCalculating && (
+        <div style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          background: 'rgba(255, 255, 255, 0.98)',
+          zIndex: 9999,
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          justifyContent: 'center',
+          gap: '32px'
+        }}>
+          <div style={{
+            fontSize: '24px',
+            fontWeight: '700',
+            color: '#1f2937',
+            textAlign: 'center'
+          }}>
+            결과 측정중입니다
+          </div>
+          <div style={{
+            width: '400px',
+            maxWidth: '80%',
+            height: '12px',
+            background: '#e5e7eb',
+            borderRadius: '20px',
+            overflow: 'hidden',
+            boxShadow: 'inset 0 2px 4px rgba(0, 0, 0, 0.1)'
+          }}>
+            <div style={{
+              height: '100%',
+              background: '#3b82f6',
+              width: `${calculatingProgress}%`,
+              borderRadius: '20px',
+              transition: 'width 0.05s linear',
+              boxShadow: '0 2px 8px rgba(59, 130, 246, 0.4)'
+            }}></div>
+          </div>
+          <div style={{
+            fontSize: '16px',
+            color: '#6b7280',
+            fontWeight: '500'
+          }}>
+            {Math.round(calculatingProgress)}%
+          </div>
+        </div>
+      )}
       <Header />
 
-      <section style={{ padding: '24px' }}>
-        <h2>엄마 유형 테스트</h2>
-        <p>아래에 100문항 스켈레톤이 보입니다. 각 문항에 응답한 뒤 '점수 계산'을 눌러 결과를 확인하세요.</p>
+      <section className={styles.section}>
+        {/* 프로그레스 바 */}
+        <div className={styles.progressSection}>
+          <div className={styles.progressHeader}>
+            <h2 className={styles.title}>엄마 유형 테스트</h2>
+            <span className={styles.stepBadge}>
+              {currentPage + 1} / {totalPages} 단계
+            </span>
+          </div>
+          <div className={styles.progressBarContainer}>
+            <div 
+              className={styles.progressBarFill}
+              style={{ width: `${((currentPage + 1) / totalPages) * 100}%` }}
+            ></div>
+          </div>
+        </div>
 
-        <QuestionList questions={pageQuestions} answers={answers} offset={currentPage * pageSize} onAnswer={handleAnswer} />
+        <p className={styles.description}>아래에 100문항 스켈레톤이 보입니다. 각 문항에 응답한 뒤 '점수 계산'을 눌러 결과를 확인하세요.</p>
+
+        <QuestionList 
+          questions={pageQuestions.map(q => q.question)} 
+          answers={answers} 
+          offset={currentPage * pageSize} 
+          onAnswer={handleAnswer}
+          originalIndices={pageQuestions.map(q => q.originalIndex)}
+        />
 
         {toastMessage && (
-          <div style={{ position: 'fixed', right: 20, bottom: 24, background: '#111827', color: '#fff', padding: '10px 14px', borderRadius: 8, boxShadow: '0 6px 18px rgba(0,0,0,0.18)' }}>
+          <div style={{ 
+            position: 'fixed', 
+            right: 20, 
+            top: 24, 
+            background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+            color: '#fff', 
+            padding: '16px 24px', 
+            borderRadius: 16, 
+            boxShadow: '0 10px 30px rgba(102, 126, 234, 0.3), 0 4px 12px rgba(0, 0, 0, 0.1)', 
+            zIndex: 1000,
+            fontSize: '15px',
+            fontWeight: 500,
+            display: 'flex',
+            alignItems: 'center',
+            gap: '8px',
+            animation: 'slideInDown 0.3s ease-out',
+            backdropFilter: 'blur(10px)',
+            border: '1px solid rgba(255, 255, 255, 0.2)'
+          }}>
             {toastMessage}
           </div>
         )}
+        <style jsx>{`
+          @keyframes slideInDown {
+            from {
+              opacity: 0;
+              transform: translateY(-20px);
+            }
+            to {
+              opacity: 1;
+              transform: translateY(0);
+            }
+          }
+        `}</style>
 
-        <div style={{ marginTop: 12, display: 'flex', gap: 8, alignItems: 'center' }}>
+        <div className={styles.navigationContainer}>
           <button
-            onClick={() => setCurrentPage((p) => Math.max(0, p - 1))}
+            onClick={() => {
+              setCurrentPage((p) => Math.max(0, p - 1))
+              window.scrollTo({ top: 0, behavior: 'smooth' })
+            }}
             disabled={currentPage === 0}
+            className={styles.navButton}
+            onMouseEnter={(e) => {
+              if (currentPage !== 0) {
+                e.currentTarget.style.background = '#2563eb'
+              }
+            }}
+            onMouseLeave={(e) => {
+              if (currentPage !== 0) {
+                e.currentTarget.style.background = '#3b82f6'
+              }
+            }}
           >
-            이전
+            ← 이전
           </button>
-          <div>페이지 {currentPage + 1} / {totalPages}</div>
+          <div className={styles.pageInfo}>
+            페이지 {currentPage + 1} / {totalPages}
+          </div>
           <button
             onClick={() => {
               if (hasUnansweredOnPage(currentPage)) {
                 showToast('이 페이지에 응답하지 않은 문항이 있습니다. 먼저 모두 응답해 주세요.')
+                // 미답변 문항으로 스크롤
+                setTimeout(() => {
+                  const start = currentPage * pageSize
+                  const end = start + pageSize
+                  for (let i = start; i < end && i < shuffledQuestions.length; i++) {
+                    const originalIndex = shuffledQuestions[i].originalIndex
+                    if (answers[originalIndex] === null || answers[originalIndex] === undefined) {
+                      const displayIndex = start + (i - start)
+                      const element = document.querySelector(`[data-question-idx="${displayIndex}"]`)
+                      if (element) {
+                        element.scrollIntoView({ behavior: 'smooth', block: 'center' })
+                      }
+                      break
+                    }
+                  }
+                }, 100)
                 return
               }
               setCurrentPage((p) => Math.min(totalPages - 1, p + 1))
+              window.scrollTo({ top: 0, behavior: 'smooth' })
             }}
             disabled={currentPage >= totalPages - 1}
+            className={styles.navButton}
+            onMouseEnter={(e) => {
+              if (currentPage < totalPages - 1) {
+                e.currentTarget.style.background = '#2563eb'
+              }
+            }}
+            onMouseLeave={(e) => {
+              if (currentPage < totalPages - 1) {
+                e.currentTarget.style.background = '#3b82f6'
+              }
+            }}
           >
-            다음
+            다음 →
           </button>
         </div>
 
@@ -214,23 +444,55 @@ function FinalControls({
 }) {
   const controlsRef = useRef<HTMLDivElement | null>(null)
 
-  useEffect(() => {
-    if (controlsRef.current) controlsRef.current.scrollIntoView({ behavior: 'smooth', block: 'center' })
-  }, [score, mapping])
-
   return (
-    <div ref={controlsRef} style={{ marginTop: 18 }}>
-      <div>
-        <button onClick={calculateScore} style={{ marginRight: 8 }}>점수 계산</button>
-        <button onClick={reset}>초기화</button>
-      </div>
-
-      {score !== null && mapping && axisSums && (
-        <Results score={score} mapping={mapping} axisSums={axisSums} />
-      )}
-
-      <div style={{ marginTop: 12 }}>
-        <ShareControls score={score} mapping={mapping} />
+    <div ref={controlsRef} style={{ 
+      marginTop: '40px',
+      padding: '32px',
+      background: '#f9fafb',
+      borderRadius: '16px',
+      border: '1px solid #e5e7eb',
+      textAlign: 'center'
+    }}>
+      <div style={{ display: 'flex', gap: '12px', justifyContent: 'center', flexWrap: 'wrap' }}>
+        <button 
+          onClick={calculateScore} 
+          style={{ 
+            background: '#3b82f6',
+            color: '#fff',
+            border: 'none',
+            padding: '16px 40px',
+            borderRadius: '12px',
+            fontSize: '16px',
+            fontWeight: '600',
+            cursor: 'pointer',
+            boxShadow: '0 4px 12px rgba(59, 130, 246, 0.3)',
+            transition: 'all 0.3s ease'
+          }}
+          onMouseEnter={(e) => {
+            e.currentTarget.style.background = '#2563eb'
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.background = '#3b82f6'
+          }}
+        >
+          점수 계산
+        </button>
+        <button 
+          onClick={reset}
+          style={{ 
+            background: '#fff',
+            color: '#6b7280',
+            border: '2px solid #e5e7eb',
+            padding: '16px 40px',
+            borderRadius: '12px',
+            fontSize: '16px',
+            fontWeight: '600',
+            cursor: 'pointer',
+            transition: 'all 0.3s ease'
+          }}
+        >
+          초기화
+        </button>
       </div>
     </div>
   )

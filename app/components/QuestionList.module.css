@@ -1,62 +1,204 @@
 .list {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 32px;
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 40px 20px;
 }
+
 .item {
   background: #fff;
-  border: 1px solid #e6eef8;
-  padding: 10px;
-  border-radius: 6px;
+  border: 1px solid #e5e7eb;
+  padding: 32px;
+  border-radius: 16px;
+  transition: all 0.3s ease;
 }
+
 /* unanswered state: slightly faded */
 .unanswered {
-  opacity: 0.55;
+  opacity: 0.75;
+  background: #f9fafb;
 }
+
 .answered {
-  background: linear-gradient(90deg, #f6fffb 0%, #ffffff 100%);
-  border-color: #c8f7e6;
+  background: #ffffff;
+  border-color: #10b981;
+  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.1);
 }
 
 .active {
   background: #ffffff;
   border-color: #10b981;
-  box-shadow: 0 6px 18px rgba(16,185,129,0.06);
+  box-shadow: 0 8px 24px rgba(16, 185, 129, 0.15);
 }
-.row {
+
+.qtext {
+  font-size: 18px;
+  font-weight: 500;
+  color: #1f2937;
+  line-height: 1.6;
+  margin-bottom: 32px;
+  text-align: left;
+  transition: all 0.3s ease;
+}
+
+/* 현재 답변해야 할 질문의 글씨를 진하게 */
+.active .qtext {
+  font-weight: 700;
+  color: #111827;
+  font-size: 19px;
+}
+
+.scaleContainer {
+  width: 100%;
+}
+
+.scaleLabels {
   display: flex;
+  justify-content: space-between;
+  margin-bottom: 20px;
+  padding: 0 10px;
+}
+
+.labelLeft,
+.labelRight {
+  font-size: 15px;
+  font-weight: 500;
+  color: #6b7280;
+}
+
+.options {
+  display: flex;
+  justify-content: space-between;
   align-items: center;
   gap: 12px;
+  width: 100%;
+  padding: 0 10px;
 }
-.qindex {
-  width: 28px;
-  font-weight: 600;
-}
-.qtext {
+
+.option {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  cursor: pointer;
+  position: relative;
   flex: 1;
 }
+
+.option input {
+  position: absolute;
+  opacity: 0;
+  cursor: pointer;
+}
+
+.circle {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  border: 3px solid #d1d5db;
+  background: #ffffff;
+  transition: all 0.3s ease;
+  position: relative;
+}
+
+.unanswered .circle {
+  border-color: #e5e7eb;
+  background: #f9fafb;
+  opacity: 0.7;
+}
+
+.option:hover .circle {
+  border-color: #10b981;
+  transform: scale(1.1);
+  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.2);
+}
+
+.selected .circle {
+  border-color: #10b981;
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  box-shadow: 0 4px 16px rgba(16, 185, 129, 0.3);
+  transform: scale(1.05);
+}
+
+.selected .circle::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 24px;
+  height: 24px;
+  background: #ffffff;
+  border-radius: 50%;
+}
+
+/* 선택되지 않은 상태에서 원을 밝게 */
+.item:not(.unanswered) .option:not(.selected) .circle {
+  border-color: #10b981;
+  background: #ffffff;
+  opacity: 1;
+}
+
+/* 미답변 질문의 선택 가능한 원을 밝게 */
+.unanswered .option:hover .circle {
+  opacity: 1;
+  background: #ffffff;
+  border-color: #10b981;
+}
+
 .revbtn {
   display: none;
 }
-.options {
-  margin-top: 8px;
-  display: flex;
-  gap: 8px;
-}
-.option {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-}
+
 .optLabel {
-  font-size: 13px;
+  display: none;
 }
 
-.unanswered .optLabel {
-  color: #9aa6b2;
-}
+/* 모바일 대응 (360px) */
+@media (max-width: 480px) {
+  .list {
+    gap: 24px;
+    padding: 20px 12px;
+  }
 
-.answered .optLabel {
-  color: #0b6b4f;
-  font-weight: 600;
+  .item {
+    padding: 20px 16px;
+    border-radius: 12px;
+  }
+
+  .qtext {
+    font-size: 16px;
+    margin-bottom: 24px;
+  }
+
+  .active .qtext {
+    font-size: 17px;
+  }
+
+  .scaleLabels {
+    margin-bottom: 16px;
+    padding: 0 5px;
+  }
+
+  .labelLeft,
+  .labelRight {
+    font-size: 13px;
+  }
+
+  .options {
+    gap: 8px;
+    padding: 0 5px;
+  }
+
+  .circle {
+    width: 40px;
+    height: 40px;
+    border: 2px solid #d1d5db;
+  }
+
+  .selected .circle::after {
+    width: 18px;
+    height: 18px;
+  }
 }

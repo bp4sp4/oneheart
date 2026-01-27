@@ -65,18 +65,20 @@ export async function POST(req: Request) {
       htmlContent: html,
     }
 
-    const res = await fetch('https://api.brevo.com/v3/smtp/email', {
+const res = await fetch('https://api.brevo.com/v3/smtp/email', {
       method: 'POST',
       headers: {
+        'Accept': 'application/json', // 추가
         'Content-Type': 'application/json',
         'api-key': apiKey,
       },
       body: JSON.stringify(payload),
     })
 
-    if (!res.ok) {
-      const text = await res.text()
-      return NextResponse.json({ error: text }, { status: res.status })
+if (!res.ok) {
+      const errorData = await res.json() // text 대신 json으로 확인
+      console.error('Brevo API Error:', errorData) // 서버 로그에서 에러 원인 확인 가능
+      return NextResponse.json({ error: errorData.message || 'Unknown error' }, { status: res.status })
     }
 
     return NextResponse.json({ ok: true })

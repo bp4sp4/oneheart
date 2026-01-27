@@ -9,13 +9,16 @@ export default function QuestionList({
   answers,
   offset = 0,
   onAnswer,
+  originalIndices,
 }: {
   questions: Q[]
   answers: Record<number, number | null>
   offset?: number
   onAnswer: (index: number, value: number) => void
+  originalIndices?: number[]
 }) {
   const options = [-2, -1, 0, 1, 2]
+  const labels = ['매우 그렇지 않다', '그렇지 않다', '보통이다', '그렇다', '매우 그렇다']
   const containerRef = useRef<HTMLDivElement | null>(null)
   const [activeIdx, setActiveIdx] = useState<number | null>(null)
 
@@ -42,32 +45,61 @@ export default function QuestionList({
     }
   }, [questions, offset])
 
+  const questionRefs = useRef<{ [key: number]: HTMLDivElement | null }>({})
+
+  const handleAnswer = (originalIdx: number, displayIdx: number, value: number) => {
+    onAnswer(originalIdx, value)
+    
+    // 다음 질문으로 스크롤 (화면상 다음 인덱스)
+    setTimeout(() => {
+      const nextDisplayIdx = displayIdx + 1
+      const nextRef = questionRefs.current[nextDisplayIdx]
+      if (nextRef) {
+        nextRef.scrollIntoView({ behavior: 'smooth', block: 'center' })
+      }
+    }, 300)
+  }
+
   return (
     <div className={styles.list}>
       {questions.map((q, i) => {
         const idx = offset + i
-        const unanswered = answers[idx] === null || answers[idx] === undefined
+        const originalIdx = originalIndices ? originalIndices[i] : idx
+        const unanswered = !(originalIdx in answers) || answers[originalIdx] === null || answers[originalIdx] === undefined
         const answered = !unanswered
         const isActive = activeIdx === idx
         return (
-          <div key={idx} ref={isActive ? undefined : undefined} className={`${styles.item} ${unanswered ? styles.unanswered : ''} ${answered ? styles.answered : ''} ${isActive ? styles.active : ''}`} data-rev={q.reversed ? 'rev' : ''}>
-            <div className={styles.row}>
-              <div className={styles.qtext}>{q.text}</div>
-            </div>
+          <div 
+            key={idx} 
+            ref={(el) => { questionRefs.current[idx] = el }}
+            data-question-idx={idx}
+            className={`${styles.item} ${unanswered ? styles.unanswered : ''} ${answered ? styles.answered : ''} ${isActive ? styles.active : ''}`} 
+            data-rev={q.reversed ? 'rev' : ''}
+          >
+            <div className={styles.qtext}>{q.text}</div>
 
-            <div className={styles.options}>
-              {options.map((opt) => (
-                <label key={opt} className={styles.option}>
-                  <input
-                    type="radio"
-                    name={`q-${idx}`}
-                    value={opt}
-                    checked={answers[idx] === opt}
-                    onChange={() => onAnswer(idx, opt)}
-                  />
-                  <span className={styles.optLabel}>{opt}</span>
-                </label>
-              ))}
+            <div className={styles.scaleContainer}>
+              <div className={styles.scaleLabels}>
+                <span className={styles.labelLeft}>{labels[0]}</span>
+                <span className={styles.labelRight}>{labels[labels.length - 1]}</span>
+              </div>
+              <div className={styles.options}>
+                {options.map((opt, optIdx) => {
+                  const isChecked = (originalIdx in answers) && answers[originalIdx] === opt
+                  return (
+                    <label key={opt} className={`${styles.option} ${isChecked ? styles.selected : ''}`}>
+                      <input
+                        type="radio"
+                        name={`q-${idx}`}
+                        value={opt}
+                        checked={isChecked}
+                        onChange={() => handleAnswer(originalIdx, idx, opt)}
+                      />
+                      <span className={styles.circle}></span>
+                    </label>
+                  )
+                })}
+              </div>
             </div>
           </div>
         )
