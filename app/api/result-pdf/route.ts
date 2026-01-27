@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server'
-import PDFDocument from 'pdfkit/js/pdfkit.standalone.js'
+import PDFDocument from 'pdfkit'
 import fs from 'fs'
 import path from 'path'
 
