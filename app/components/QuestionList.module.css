@@ -1,3 +1,28 @@
+/* 자기 차례가 아닐 때 전체 카드 연회색 배경 + 흐림 */
+.answered {
+  background: #f3f4f6 !important;
+  opacity: 0.6;
+}
+/* 자기 차례가 아닐 때(answered) 원(circle)도 흐리게 */
+.answered .circle {
+  opacity: 0.6;
+  border-color: #d1d5db;
+}
+
+.answered .selected .circle {
+  opacity: 0.6;
+  border-color: #d1d5db;
+  .item {
+    background: #f3f4f6;
+    border: 1px solid #e5e7eb;
+    padding: 32px;
+    border-radius: 16px;
+    transition: all 0.3s ease;
+  }
+}
+/* 모든 활성화 항목에 배경, 그림자, border-color까지 완전 강제 */
+
+
 .list {
   display: flex;
   flex-direction: column;
@@ -8,28 +33,17 @@
 }
 
 .item {
-  background: #fff;
+  background: #fff !important;
   border: 1px solid #e5e7eb;
   padding: 32px;
   border-radius: 16px;
   transition: all 0.3s ease;
 }
 
-/* unanswered state: slightly faded */
-.unanswered {
-  opacity: 0.75;
-  background: #f9fafb;
-}
+/* 어떤 상태든 .item, .option, .circle에 배경색이 들어가지 않도록 강제 */
 
-.answered {
-  background: #ffffff;
-  border-color: #10b981;
-  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.1);
-}
 
-.active {
-  /* 제거: 초록 테두리가 혼란을 줌 */
-}
+
 
 .qtext {
   font-size: 18px;
@@ -41,13 +55,22 @@
   transition: all 0.3s ease;
 }
 
-/* 현재 답변해야 할 질문의 글씨를 진하게 */
-.active .qtext {
-  font-weight: 700;
-  color: #111827;
-  font-size: 19px;
+/* 활성화된 문항의 라벨도 진하게 */
+.active .labelLeft,
+.active .labelRight {
+  
+  color: #374151;
 }
 
+/* 답변 완료된 질문은 비활성화 스타일 */
+.answered .qtext {
+  opacity: 0.6;
+}
+
+.answered .labelLeft,
+.answered .labelRight {
+  opacity: 0.6;
+}
 .scaleContainer {
   width: 100%;
 }
@@ -59,12 +82,6 @@
   padding: 0 10px;
 }
 
-.labelLeft,
-.labelRight {
-  font-size: 15px;
-  font-weight: 500;
-  color: #6b7280;
-}
 
 .options {
   display: flex;
@@ -94,55 +111,63 @@
   width: 50px;
   height: 50px;
   border-radius: 50%;
-  border: 3px solid #d1d5db;
-  background: #ffffff;
+  border: 3px solid #e5e7eb;
+  background: transparent;
   transition: all 0.3s ease;
   position: relative;
 }
 
+/* 답변 대기 중인 문항: 모든 원이 초록색 테두리 (불이 켜진 느낌) */
 .unanswered .circle {
-  border-color: #e5e7eb;
-  background: #f9fafb;
-  opacity: 0.7;
+  border-color: #10b981;
+  background: transparent;
+  opacity: 1;
 }
 
 .option:hover .circle {
-  border-color: #10b981;
   transform: scale(1.1);
-  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.2);
+  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
 }
 
-.selected .circle {
+/* 미답변 상태의 선택된 원: 테두리만 보이도록 */
+.unanswered .selected .circle {
   border-color: #10b981;
-  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
-  box-shadow: 0 4px 16px rgba(16, 185, 129, 0.3);
+  background: transparent !important;
+  box-shadow: 0 2px 8px rgba(16, 185, 129, 0.3);
   transform: scale(1.05);
 }
 
+/* 선택된 원에 체크마크 표시 */
 .selected .circle::after {
-  content: '';
+  content: '✓';
   position: absolute;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  width: 24px;
-  height: 24px;
-  background: #ffffff;
-  border-radius: 50%;
+  color: #10b981;
+  font-size: 28px;
+  font-weight: bold;
+  line-height: 1;
 }
 
-/* 선택되지 않은 상태에서 원을 밝게 */
-.item:not(.unanswered) .option:not(.selected) .circle {
-  border-color: #10b981;
-  background: #ffffff;
-  opacity: 1;
+/* 답변 완료된 질문의 선택되지 않은 원: 회색으로 거의 안 보이게 */
+.answered .option:not(.selected) .circle {
+  border-color: #d1d5db;
+  background: transparent;
+  opacity: 0.3;
 }
 
-/* 미답변 질문의 선택 가능한 원을 밝게 */
+/* 답변 완료된 질문의 선택된 원: 흐리게(비활성화) */
+.answered .selected .circle {
+  border-color: #d1d5db;
+  background: transparent;
+  opacity: 0.3;
+}
+
+/* 미답변 질문에서 호버 시 */
 .unanswered .option:hover .circle {
-  opacity: 1;
-  background: #ffffff;
-  border-color: #10b981;
+  transform: scale(1.1);
+  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
 }
 
 .revbtn {
@@ -177,6 +202,9 @@
   .scaleLabels {
     margin-bottom: 16px;
     padding: 0 5px;
+  }
+  .item.active {
+    background: #fff;
   }
 
   .labelLeft,

@@ -23,12 +23,25 @@ export async function POST(req: Request) {
     const smtpHost = process.env.BREVO_SMTP_HOST || 'smtp-relay.brevo.com'
     const smtpPort = Number(process.env.BREVO_SMTP_PORT || '587')
 
+    // 디버깅: 환경 변수 확인 (실제 값은 로그에만 표시, 민감 정보는 마스킹)
+    console.log('[Email Debug] Config check:', {
+      hasApiKey: !!apiKey,
+      hasSenderEmail: !!senderEmail,
+      hasSmtpLogin: !!smtpLogin,
+      smtpHost,
+      smtpPort,
+      to,
+      subject,
+    })
+
     if (!senderEmail) {
+      console.error('[Email Error] Sender email not configured')
       return NextResponse.json({ error: 'Mail sender not configured' }, { status: 500 })
     }
 
     // If SMTP credentials are provided (SMTP login + key), use nodemailer SMTP transport.
     if (smtpLogin && apiKey) {
+      console.log('[Email] Using SMTP transport')
       try {
         const transporter = nodemailer.createTransport({
           host: smtpHost,
@@ -40,24 +53,29 @@ export async function POST(req: Request) {
           },
         })
 
-        await transporter.sendMail({
+        console.log('[Email] Sending via SMTP...')
+        const info = await transporter.sendMail({
           from: `${senderName} <${senderEmail}>`,
           to,
           subject,
           html,
         })
 
+        console.log('[Email] SMTP send success:', info.messageId)
         return NextResponse.json({ ok: true })
       } catch (e: any) {
+        console.error('[Email Error] SMTP failed:', e?.message ?? String(e))
         return NextResponse.json({ error: e?.message ?? String(e) }, { status: 500 })
       }
     }
 
     // Fallback: try Brevo HTTP API (requires a REST API key, not SMTP key)
     if (!apiKey) {
+      console.error('[Email Error] No API key configured for fallback')
       return NextResponse.json({ error: 'Mail service not configured' }, { status: 500 })
     }
 
+    console.log('[Email] Using Brevo HTTP API fallback')
     const payload = {
       sender: { name: senderName, email: senderEmail },
       to: [{ email: to }],
@@ -77,12 +95,14 @@ const res = await fetch('https://api.brevo.com/v3/smtp/email', {
 
 if (!res.ok) {
       const errorData = await res.json() // text 대신 json으로 확인
-      console.error('Brevo API Error:', errorData) // 서버 로그에서 에러 원인 확인 가능
+      console.error('[Email Error] Brevo API failed:', errorData) // 서버 로그에서 에러 원인 확인 가능
       return NextResponse.json({ error: errorData.message || 'Unknown error' }, { status: res.status })
     }
 
+    console.log('[Email] Brevo API send success')
     return NextResponse.json({ ok: true })
   } catch (err: any) {
+    console.error('[Email Error] Unexpected error:', err?.message ?? String(err))
     return NextResponse.json({ error: err?.message ?? String(err) }, { status: 500 })
   }
 }

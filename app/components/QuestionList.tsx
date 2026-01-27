@@ -50,14 +50,15 @@ export default function QuestionList({
   const handleAnswer = (originalIdx: number, displayIdx: number, value: number) => {
     onAnswer(originalIdx, value)
     
-    // 다음 질문으로 스크롤 (화면상 다음 인덱스)
-    setTimeout(() => {
-      const nextDisplayIdx = displayIdx + 1
-      const nextRef = questionRefs.current[nextDisplayIdx]
-      if (nextRef) {
+    // 다음 질문으로 스크롤 및 activeIdx 업데이트
+    const nextDisplayIdx = displayIdx + 1
+    const nextRef = questionRefs.current[nextDisplayIdx]
+    if (nextRef) {
+      setActiveIdx(nextDisplayIdx)
+      setTimeout(() => {
         nextRef.scrollIntoView({ behavior: 'smooth', block: 'center' })
-      }
-    }, 300)
+      }, 0)
+    }
   }
 
   return (

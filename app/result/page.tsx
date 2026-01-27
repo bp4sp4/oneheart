@@ -118,14 +118,12 @@ export default function ResultPage() {
         <h1 className={styles.title}>엄마 유형 테스트 결과</h1>
         
         <Results 
-          score={result.score} 
           mapping={result.mapping} 
           axisSums={result.axisSums} 
         />
 
         <div className={styles.actions}>
           <ShareControls 
-            score={result.score} 
             mapping={result.mapping} 
           />
         </div>
