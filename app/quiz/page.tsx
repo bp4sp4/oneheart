@@ -121,29 +121,30 @@ export default function QuizPage() {
   }
 
   // 4 axes: A (0-24), B (25-49), C (50-74), D (75-99)
+  // 축 순서: [R/E, S/O, P/L, C/T]
   const codeMap: Record<string, { code: string; label: string; summary: string }> = {
-    RSPC: { code: 'RSPC', label: '알스피씨', summary: '차분한 준비형 엄마 — 혼자 정리하며 미리 대비' },
-    RSPT: { code: 'RSPT', label: '알스피티', summary: '믿음형 준비 엄마 — 조용히 대비하고 아이를 신뢰' },
-    ROPC: { code: 'ROPC', label: '알옵씨', summary: '참고형 준비 엄마 — 주변 조언을 모아 대비' },
-    ROPT: { code: 'ROPT', label: '알옵티', summary: '균형형 준비 엄마 — 참고하되 과도하지 않음' },
-    RLPC: { code: 'RLPC', label: '알엘피씨', summary: '관찰형 엄마 — 스스로 판단하며 지켜봄' },
-    RLPT: { code: 'RLPT', label: '알엘피티', summary: '안정 신뢰형 엄마 — 크게 흔들리지 않음' },
-    RLTC: { code: 'RLTC', label: '알엘티씨', summary: '비교 관찰형 엄마 — 주변을 보며 판단' },
-    RLTT: { code: 'RLTT', label: '알엘티티', summary: '유연 관찰형 엄마 — 흘려보내는 힘이 있음' },
-    ESPC: { code: 'ESPC', label: '엣스피씨', summary: '계획 실행형 엄마 — 말로 풀며 주도' },
-    ESPT: { code: 'ESPT', label: '엣스피티', summary: '동기부여형 엄마 — 준비하지만 신뢰도 큼' },
-    EOPC: { code: 'EOPC', label: '엣옵씨', summary: '정보 수집형 엄마 — 공유·비교로 대비' },
-    EOPT: { code: 'EOPT', label: '엣옵티', summary: '균형 소통형 엄마 — 조언도 듣고 내려놓음' },
-    ELPC: { code: 'ELPC', label: '엣엘피씨', summary: '감정 공감형 엄마 — 즉각 반응하는 편' },
-    ELPT: { code: 'ELPT', label: '엣엘피티', summary: '따뜻한 신뢰형 엄마 — 공감 후 믿어줌' },
-    ELTC: { code: 'ELTC', label: '엣엘티씨', summary: '공감 비교형 엄마 — 이야기 나누며 기준 형성' },
-    ELTT: { code: 'ELTT', label: '엣엘티티', summary: '자유 공감형 엄마 — 걱정도 흘려보내는 편' },
+    RSPC: { code: 'RSPC', label: '알스피씨', summary: '차분한 준비형 엄마 — 혼자 생각하며 철저히 대비하고 직접 챙김' },
+    RSPT: { code: 'RSPT', label: '알쓰피티', summary: '믿음형 준비 엄마 — 신중하게 계획을 세우고 아이를 믿고 맡김' },
+    RSLC: { code: 'RSLC', label: '알쓸엘씨', summary: '참고형 자립 엄마 — 고민은 혼자 삭히되 필요한 건 직접 해결함' },
+    RSLT: { code: 'RSLT', label: '알쓸엘티', summary: '유연한 휴식형 엄마 — 내면의 평화를 유지하며 순리에 맡기는 편' },
+    ROPC: { code: 'ROPC', label: '알옵피씨', summary: '관찰형 준비 엄마 — 주변을 살피며 꼼꼼하게 대비하고 직접 관리함' },
+    ROPT: { code: 'ROPT', label: '알옵티', summary: '안정 신뢰형 엄마 — 타인의 시선을 고려해 준비하되 믿음으로 기다림' },
+    ROLC: { code: 'ROLC', label: '알옴엘씨', summary: '트렌드 민감형 엄마 — 주변 반응에 민감하며 상황에 맞춰 직접 챙김' },
+    ROLT: { code: 'ROLT', label: '알옴엘티', summary: '유연 관찰형 엄마 — 사람들과 어우러지며 상황이 흐르는 대로 맡김' },
+    ESPC: { code: 'ESPC', label: '이쓰피씨', summary: '계획 실행형 엄마 — 활발하게 소통하며 계획한 대로 직접 이끌어감' },
+    ESPT: { code: 'ESPT', label: '이쓰피티', summary: '동기부여형 엄마 — 에너지를 나누며 준비하고 아이의 자율을 믿음' },
+    ESLC: { code: 'ESLC', label: '이쓸엘씨', summary: '정보 수집형 엄마 — 표현이 확실하며 주관대로 직접 부딪히며 해결' },
+    ESLT: { code: 'ESLT', label: '이쓸엘티', summary: '균형 소통형 엄마 — 밝게 소통하며 스트레스 없이 상황에 맡김' },
+    EOPC: { code: 'EOPC', label: '이옵피씨', summary: '감정 공감형 엄마 — 함께 나누며 물건을 챙기고 세심하게 직접 관리' },
+    EOPT: { code: 'EOPT', label: '이옵티', summary: '따뜻한 신뢰형 엄마 — 나정하게 대화하며 준비하고 믿음으로 지켜봄' },
+    EOLC: { code: 'EOLC', label: '이옴엘씨', summary: '소통 정보형 엄마 — 주변과 소통하며 유연하게 대처하고 직접 발로 뛸' },
+    EOLT: { code: 'EOLT', label: '이옴엘티', summary: '자유 공감형 엄마 — 사람들과 어울리는 것을 즐기며 편안하게 맡김' },
   }
 
   const axisPairs = [
     ['R', 'E'],
-    ['S', 'L'],
-    ['P', 'O'],
+    ['S', 'O'],
+    ['P', 'L'],
     ['C', 'T'],
   ]
 
@@ -215,7 +216,7 @@ export default function QuizPage() {
     })
     
     const code = letters.join('')
-    const mapping = codeMap[code] ?? { code, label: code, summary: '' }
+    const mapping = codeMap[code] ?? { code, label: code, summary: '유형 설명을 준비 중입니다' }
 
     // 점수 합계 배열
     const sums = axisCounts.map(c => c.sum)

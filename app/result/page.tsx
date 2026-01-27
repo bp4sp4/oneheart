@@ -25,7 +25,7 @@ export default function ResultPage() {
 
       console.log('Result page params:', { scoreParam, codeParam, labelParam, summaryParam, axisParam, countsParam })
 
-      if (scoreParam && codeParam && labelParam && summaryParam && axisParam) {
+      if (scoreParam && codeParam && labelParam && axisParam) {
         const parsedAxisSums = JSON.parse(decodeURIComponent(axisParam))
         const parsedCounts = countsParam ? JSON.parse(decodeURIComponent(countsParam)) : null
         const totalScore = parseInt(scoreParam)
@@ -34,8 +34,8 @@ export default function ResultPage() {
           score: totalScore,
           mapping: {
             code: codeParam,
-            label: decodeURIComponent(labelParam),
-            summary: decodeURIComponent(summaryParam),
+            label: labelParam,
+            summary: summaryParam || '',
           },
           axisSums: parsedAxisSums,
         })
@@ -43,7 +43,7 @@ export default function ResultPage() {
         // 콘솔에 상세 점수 출력
         console.group('📊 테스트 결과 상세 (비율 방식)')
         console.log('유형 코드:', codeParam)
-        console.log('유형 이름:', decodeURIComponent(labelParam))
+        console.log('유형 이름:', labelParam)
         console.log('---')
         console.log('축별 결과 (개수 비율로 판단 + 점수 합계):')
         const axisPairs = [
