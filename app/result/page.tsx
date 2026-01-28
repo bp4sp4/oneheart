@@ -4,6 +4,8 @@ import { useEffect, useState } from 'react'
 import Results from '../components/Results'
 import ShareControls from '../components/ShareControls'
 import styles from './result.module.css'
+import { getSupabase } from '../../lib/supabase'
+import { MotherResponse } from '../../types/mother'
 
 export default function ResultPage() {
   const searchParams = useSearchParams()
@@ -13,6 +15,17 @@ export default function ResultPage() {
     mapping: { code: string; label: string; summary: string }
     axisSums: number[]
   } | null>(null)
+  const [recoveryCode, setRecoveryCode] = useState('')
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState<string | null>(null)
+  const handlePayment = async () => {
+    // 결과를 localStorage에 저장
+    const storedOrder = localStorage.getItem('quizOrder')
+    const quizOrder = storedOrder ? JSON.parse(storedOrder) : null
+    localStorage.setItem('quizResult', JSON.stringify({ ...result, quizOrder }));
+    // 결제 위젯 페이지로 이동
+    router.push('/pay/checkout');
+  }
 
   useEffect(() => {
     try {
@@ -84,21 +97,83 @@ export default function ResultPage() {
         }
         console.groupEnd()
       } else {
-        // 결과가 없으면 quiz 페이지로
-        console.warn('Missing parameters, redirecting to quiz')
-        setTimeout(() => router.push('/quiz'), 100)
+        // 결과가 없으면 코드 입력 폼 표시
       }
     } catch (error) {
       console.error('Error loading result:', error)
-      setTimeout(() => router.push('/quiz'), 100)
     }
   }, [searchParams, router])
+
+  const handleRecovery = async () => {
+    if (!recoveryCode.trim()) {
+      setError('복원 코드를 입력하세요.')
+      return
+    }
+    setLoading(true)
+    setError(null)
+    try {
+      const sb = getSupabase()
+      if (sb) {
+        const { data, error } = await sb.from('mothers').select('*').eq('recovery_code', recoveryCode.toUpperCase()).single()
+        if (error || !data) {
+          setError('유효하지 않은 복원 코드입니다.')
+          return
+        }
+        const mother: MotherResponse = data
+        // 결과 설정
+        const axisSums: number[] = []
+        const axisPairs = [
+          ['R', 'E'],
+          ['S', 'L'],
+          ['P', 'O'],
+          ['C', 'T']
+        ]
+        axisPairs.forEach(([pos, neg]) => {
+          axisSums.push(mother.scores[pos] || -(mother.scores[neg] || 0))
+        })
+        // 퀴즈 순서 복원
+        if (mother.quizOrder) {
+          localStorage.setItem('quizOrder', JSON.stringify(mother.quizOrder))
+        }
+        setResult({
+          score: mother.total,
+          mapping: {
+            code: mother.typeCode,
+            label: mother.typeName,
+            summary: mother.summary,
+          },
+          axisSums,
+        })
+      } else {
+        setError('DB 연결 실패.')
+      }
+    } catch (err) {
+      setError('조회 중 오류 발생.')
+    } finally {
+      setLoading(false)
+    }
+  }
 
   if (!result) {
     return (
       <div className={styles.loading}>
         <div className={styles.spinner}></div>
         <p>결과를 불러오는 중...</p>
+        <div style={{ marginTop: 20 }}>
+          <h3>결과 복원</h3>
+          <p>결제 시 받은 복원 코드를 입력하세요.</p>
+          <input
+            type="text"
+            value={recoveryCode}
+            onChange={(e) => setRecoveryCode(e.target.value)}
+            placeholder="복원 코드 입력"
+            style={{ padding: 10, marginRight: 10 }}
+          />
+          <button onClick={handleRecovery} disabled={loading} style={{ padding: 10 }}>
+            {loading ? '조회 중...' : '조회'}
+          </button>
+          {error && <p style={{ color: 'red' }}>{error}</p>}
+        </div>
       </div>
     )
   }
@@ -126,6 +201,12 @@ export default function ResultPage() {
           <ShareControls 
             mapping={result.mapping} 
           />
+          <button 
+            onClick={handlePayment}
+            style={{ padding: '10px 20px', background: '#0064FF', color: 'white', border: 'none', borderRadius: 4, marginTop: 10 }}
+          >
+            결제하기 (1,000원)
+          </button>
         </div>
 
         <div className={styles.footer}>

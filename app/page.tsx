@@ -2,6 +2,8 @@
 
 import Link from 'next/link'
 import { useState } from 'react'
+import Header from './components/Header'
+import styles from './page.module.css'
 
 export default function HomePage() {
   const [emailStatus, setEmailStatus] = useState<string>('')
@@ -49,52 +51,53 @@ export default function HomePage() {
   }
 
   return (
-    <main style={{ padding: 40, display: 'flex', justifyContent: 'center' }}>
-      <div style={{ maxWidth: 760, width: '100%' }}>
-        <h1>엄마 유형 테스트</h1>
-        <p>테스트에 오신 것을 환영합니다. 간단한 질문지를 통해 유형을 확인할 수 있습니다.</p>
+    <>
+      <Header />
+      <section className={styles.hero}>
+        <div className={styles.heroLogo}></div>
+        <p className={styles.heroText}>
+          엄마의 걱정을<br/>
+          한마음연구소가 정리해드릴게요
+        </p>
+      </section>
+      <section className={styles.intro}>
+        <h2 className={styles.introTitle}>엄마니까,</h2>
+        <p className={styles.introDescription}>
+          아이를 키우면서 특별한 문제가 없어도<br/>마음의 걸림돌을 느끼는 순간들이 있습니다.
+        </p>
+      </section>
+      <main className={styles.main}>
+        <div className={styles.container}>
+          <h1 className={styles.title}>엄마 유형 테스트</h1>
+          <p className={styles.description}>테스트에 오신 것을 환영합니다. 간단한 질문지를 통해 유형을 확인할 수 있습니다.</p>
 
-        <div style={{ marginTop: 24, display: 'flex', gap: 12, flexWrap: 'wrap' }}>
-          <Link href="/payment"><button style={{ padding: '10px 14px' }}>결제 후 테스트 시작</button></Link>
-          <Link href="/quiz"><button style={{ padding: '10px 14px' }}>결제 없이 바로 보기 (개발용)</button></Link>
-          <button 
-            onClick={testEmail} 
-            disabled={sending}
-            style={{ 
-              padding: '10px 14px', 
-              background: '#28a745', 
-              color: 'white',
-              border: 'none',
-              borderRadius: '4px',
-              cursor: sending ? 'not-allowed' : 'pointer',
-              opacity: sending ? 0.6 : 1
-            }}
-          >
-            {sending ? '전송 중...' : '📧 이메일 테스트'}
-          </button>
-        </div>
-
-        {emailStatus && (
-          <div style={{ 
-            marginTop: 16, 
-            padding: '12px', 
-            background: emailStatus.includes('✅') ? '#d4edda' : '#f8d7da',
-            border: `1px solid ${emailStatus.includes('✅') ? '#c3e6cb' : '#f5c6cb'}`,
-            borderRadius: '4px',
-            color: emailStatus.includes('✅') ? '#155724' : '#721c24'
-          }}>
-            {emailStatus}
+          <div className={styles.buttonGroup}>
+            <Link href="/payment"><button className={styles.button}>결제 후 테스트 시작</button></Link>
+            <Link href="/quiz"><button className={styles.button}>결제 없이 바로 보기 (개발용)</button></Link>
+            <button 
+              onClick={testEmail} 
+              disabled={sending}
+              className={styles.emailButton}
+            >
+              {sending ? '전송 중...' : '📧 이메일 테스트'}
+            </button>
           </div>
-        )}
 
-        <section style={{ marginTop: 28 }}>
-          <h3>간단 안내</h3>
-          <ul>
-            <li>결제 후 테스트를 시작하실 수 있습니다 (토스 연동 예정).</li>
-            <li>개발 중인 환경에서는 바로 시작 버튼으로 테스트 페이지로 이동합니다.</li>
-          </ul>
-        </section>
-      </div>
-    </main>
+          {emailStatus && (
+            <div className={`${styles.statusMessage} ${emailStatus.includes('✅') ? styles.statusSuccess : styles.statusError}`}>
+              {emailStatus}
+            </div>
+          )}
+
+          <section className={styles.section}>
+            <h3>간단 안내</h3>
+            <ul>
+              <li>결제 후 테스트를 시작하실 수 있습니다 (토스 연동 예정).</li>
+              <li>개발 중인 환경에서는 바로 시작 버튼으로 테스트 페이지로 이동합니다.</li>
+            </ul>
+          </section>
+        </div>
+      </main>
+    </>
   )
 }

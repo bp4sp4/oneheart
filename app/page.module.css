@@ -1,0 +1,153 @@
+.hero {
+  display: flex;
+  width: 100%;
+  height: 450px;
+  padding: 50px 0;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  background: linear-gradient(0deg, rgba(144, 114, 114, 0.50) 0%, rgba(144, 114, 114, 0.50) 100%), url('/images/hero_banner.png') lightgray 50% / cover no-repeat;
+}
+
+.heroLogo {
+  width: 212px;
+  height: 40px;
+  flex-shrink: 0;
+  aspect-ratio: 53/10;
+  background: url('/images/hero_banner_logo.png') center / contain no-repeat;
+}
+
+.heroText {
+  color: #FFF;
+  text-align: center;
+  font-family: "Gowun Batang", serif;
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 130%;
+}
+
+.intro {
+  display: flex;
+  width: 100%;
+  padding: 60px 16px;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 12px;
+  background: #F2E6E6;
+}
+
+.introTitle {
+  color: #010101;
+  text-align: center;
+  font-family: "Gowun Batang", serif;
+  font-size: 24px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: normal;
+  margin: 0;
+}
+
+.introDescription {
+  color: #3D3D3D;
+  text-align: center;
+  font-family: Pretendard, sans-serif;
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 300;
+  line-height: 130%;
+  margin: 0;
+}
+
+.main {
+  width: 100%;
+  padding: 40px 16px;
+  display: flex;
+  justify-content: center;
+}
+
+.container {
+  max-width: 760px;
+  width: 100%;
+}
+
+.title {
+  margin: 0 0 8px 0;
+  font-size: 28px;
+  color: #111827;
+}
+
+.description {
+  margin: 0 0 24px 0;
+  font-size: 16px;
+  color: #374151;
+}
+
+.buttonGroup {
+  margin-top: 24px;
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  
+}
+
+.button {
+  padding: 10px 14px;
+}
+
+.emailButton {
+  padding: 10px 14px;
+  background: #28a745;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.emailButton:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.emailButton:not(:disabled):hover {
+  background: #218838;
+}
+
+.statusMessage {
+  margin-top: 16px;
+  padding: 12px;
+  border-radius: 4px;
+}
+
+.statusSuccess {
+  background: #d4edda;
+  border: 1px solid #c3e6cb;
+  color: #155724;
+}
+
+.statusError {
+  background: #f8d7da;
+  border: 1px solid #f5c6cb;
+  color: #721c24;
+}
+
+.section {
+  margin-top: 28px;
+}
+
+.section h3 {
+  margin: 0 0 12px 0;
+  font-size: 18px;
+  color: #111827;
+}
+
+.section ul {
+  margin: 0;
+  padding-left: 20px;
+}
+
+.section li {
+  margin-bottom: 8px;
+  color: #374151;
+}

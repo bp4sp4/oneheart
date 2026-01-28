@@ -94,7 +94,10 @@ export default function QuestionList({
                         name={`q-${idx}`}
                         value={opt}
                         checked={isChecked}
-                        onChange={() => handleAnswer(originalIdx, idx, opt)}
+                        onChange={() => {
+                          console.log('QuestionList input change', { originalIdx, displayIdx: idx, opt })
+                          handleAnswer(originalIdx, idx, opt)
+                        }}
                       />
                       <span className={styles.circle}></span>
                     </label>

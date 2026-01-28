@@ -1,19 +1,52 @@
 .header {
-  background: linear-gradient(90deg, #fff, #f7f9fc);
+  
+  background: #fff;
   border-bottom: 1px solid #e6eef8;
+  margin : 0 auto;
 }
+
 .container {
-  max-width: 960px;
+  display: flex;
+  
+  max-width: 100%;
   margin: 0 auto;
-  padding: 20px 16px;
+  padding: 12px 10px;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
 }
-.title {
-  margin: 0;
-  font-size: 20px;
-  color: #111827;
+
+.logo {
+  width: 120px;
+  height: 36px;
+  aspect-ratio: 10/3;
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
-.subtitle {
-  margin: 4px 0 0 0;
-  font-size: 13px;
-  color: #374151;
+
+.logo img {
+  object-fit: contain;
+}
+
+.menuButton {
+  width: 36px;
+  height: 36px;
+  aspect-ratio: 1/1;
+  border: none;
+  background: none;
+  padding: 0;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.menuButton:hover {
+  opacity: 0.7;
+}
+
+.menuButton:active {
+  opacity: 0.5;
 }

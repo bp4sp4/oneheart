@@ -24,8 +24,10 @@ function writePayments(obj: any) {
 }
 
 export async function POST(req: Request) {
+  console.log('[TOSS CALLBACK] /api/toss/callback POST called');
   try {
     const body = await req.json().catch(() => ({}))
+    console.log('[TOSS CALLBACK] body:', body);
     // Toss will POST result data here when autoExecute/resultCallback is used.
     // Persist the callback payload for later verification.
     const sb = getSupabase()
@@ -43,19 +45,22 @@ export async function POST(req: Request) {
           payload: body,
           updated_at: new Date().toISOString(),
         }
-
+        let upsertResult;
         if (body?.payToken) {
-          await sb.from('payments').upsert(record, { onConflict: 'pay_token' })
+          upsertResult = await sb.from('payments').upsert(record, { onConflict: 'pay_token' });
         } else if (body?.orderNo) {
-          await sb.from('payments').upsert(record, { onConflict: 'order_no' })
+          upsertResult = await sb.from('payments').upsert(record, { onConflict: 'order_no' });
         } else {
           // no clear conflict target — insert instead
-          await sb.from('payments').insert(record)
+          upsertResult = await sb.from('payments').insert(record);
+        }
+        console.log('[TOSS CALLBACK] Supabase upsert result:', upsertResult);
+        if (upsertResult.error) {
+          console.error('[TOSS CALLBACK] Supabase upsert error:', upsertResult.error);
         }
       } catch (upsertErr) {
         // If Supabase upsert fails for any reason, fall back to file persistence below
-        // eslint-disable-next-line no-console
-        console.error('Supabase upsert failed, falling back to file. Error:', upsertErr)
+        console.error('[TOSS CALLBACK] Supabase upsert failed, falling back to file. Error:', upsertErr)
         const payments = readPayments()
         const existing = payments[key] || {}
         payments[key] = {
@@ -83,7 +88,7 @@ export async function POST(req: Request) {
     }
 
     // eslint-disable-next-line no-console
-    console.log('TOSS callback persisted/updated:', key, status)
+    console.log('[TOSS CALLBACK] persisted/updated:', key, status)
     return NextResponse.json({ ok: true })
   } catch (err: any) {
     return NextResponse.json({ error: err?.message || 'failed' }, { status: 500 })

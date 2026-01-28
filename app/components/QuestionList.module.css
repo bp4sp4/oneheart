@@ -224,7 +224,12 @@
   }
 
   .selected .circle::after {
+    font-size: 20px;
     width: 18px;
     height: 18px;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    line-height: 1;
   }
 }
