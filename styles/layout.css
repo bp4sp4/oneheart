@@ -2,8 +2,7 @@
 html, body {
   height: 100%;
   margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;
-  background: #f3f6fb;
+  font-family: 'Pretendard', 'Gowun Batang', serif, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;
   color: #0f172a;
 }
 main {
