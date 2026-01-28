@@ -1,8 +1,9 @@
 "use client"
 import { useSearchParams, useRouter } from 'next/navigation'
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useRef } from 'react'
 import Results from '../components/Results'
 import ShareControls from '../components/ShareControls'
+import RadarChart, { RadarChartRef } from '../components/RadarChart'
 import styles from './result.module.css'
 import { getSupabase } from '../../lib/supabase'
 import { MotherResponse } from '../../types/mother'
@@ -10,10 +11,12 @@ import { MotherResponse } from '../../types/mother'
 export default function ResultPage() {
   const searchParams = useSearchParams()
   const router = useRouter()
+  const chartRef = useRef<RadarChartRef>(null)
   const [result, setResult] = useState<{
     score: number
     mapping: { code: string; label: string; summary: string }
     axisSums: number[]
+    counts?: { positive: number; negative: number; sum: number }[]
   } | null>(null)
   const [recoveryCode, setRecoveryCode] = useState('')
   const [loading, setLoading] = useState(false)
@@ -51,6 +54,7 @@ export default function ResultPage() {
             summary: summaryParam || '',
           },
           axisSums: parsedAxisSums,
+          counts: parsedCounts,
         })
 
         // 콘솔에 상세 점수 출력
@@ -85,9 +89,10 @@ export default function ResultPage() {
             }
             
             const total = count.positive + count.negative
+            const neutral = 25 - total
             const ratio = total > 0 ? Math.round((Math.max(count.positive, count.negative) / total) * 100) : 0
             const scoreSum = count.sum || 0
-            console.log(`  ${String.fromCharCode(65 + i)}축: ${count.positive}개 vs ${count.negative}개 | 점수합계: ${scoreSum > 0 ? '+' : ''}${scoreSum} → ${chosen} (${reason})`)
+            console.log(`  ${String.fromCharCode(65 + i)}축: ${count.positive}개 vs ${count.negative}개 (보통: ${neutral}개, 총 25개) | 점수합계: ${scoreSum > 0 ? '+' : ''}${scoreSum} → ${chosen} (${reason})`)
           })
         } else {
           parsedAxisSums.forEach((sum: number, i: number) => {
@@ -192,6 +197,13 @@ export default function ResultPage() {
       <div className={styles.resultCard}>
         <h1 className={styles.title}>엄마 유형 테스트 결과</h1>
         
+        {result.counts && (
+          <div style={{ margin: '40px 0' }}>
+            
+            <RadarChart ref={chartRef} counts={result.counts} />
+          </div>
+        )}
+        
         <Results 
           mapping={result.mapping} 
           axisSums={result.axisSums} 
@@ -199,7 +211,8 @@ export default function ResultPage() {
 
         <div className={styles.actions}>
           <ShareControls 
-            mapping={result.mapping} 
+            mapping={result.mapping}
+            chartRef={chartRef}
           />
           <button 
             onClick={handlePayment}

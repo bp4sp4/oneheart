@@ -7,6 +7,7 @@
   align-items: center;
   gap: 10px;
   background: linear-gradient(0deg, rgba(144, 114, 114, 0.50) 0%, rgba(144, 114, 114, 0.50) 100%), url('/images/hero_banner.png') lightgray 50% / cover no-repeat;
+  position: relative;
 }
 
 .heroLogo {
@@ -27,6 +28,16 @@
   line-height: 130%;
 }
 
+.heroArrow {
+  position: absolute;
+  bottom: -20px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 30px;
+  height: 25px;
+  
+}
+
 .intro {
   display: flex;
   width: 100%;
@@ -36,6 +47,7 @@
   align-items: center;
   gap: 12px;
   background: #F2E6E6;
+  position: relative;
 }
 
 .introTitle {
@@ -58,6 +70,618 @@
   font-weight: 300;
   line-height: 130%;
   margin: 0;
+}
+
+.about {
+  display: flex;
+  width: 100%;
+  padding: 80px 16px;
+  justify-content: center;
+  align-items: center;
+  
+}
+
+.aboutContent {
+  display: flex;
+  width: 360px;
+  flex-direction: column;
+  align-items: center;
+  
+}
+
+.aboutTextGroup {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  
+  align-self: stretch;
+}
+
+.aboutTitle {
+  color: var(--Grayscale-900, #010101);
+  font-family: "Gowun Batang", serif;
+  font-size: 18px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: normal;
+  margin: 0;
+}
+
+.aboutSubtitle {
+  color: #A65661;
+  font-family: "Gowun Batang", serif;
+  font-size: 16px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: normal;
+    
+}
+
+.aboutDescription {
+  color: var(--Grayscale-700, #3D3D3D);
+  font-family: Pretendard, sans-serif;
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 300;
+  line-height: normal;
+  margin: 8px 0 12px 0;
+}
+
+.aboutImage {
+  width: 328px;
+  height: 328px;
+  align-self: stretch;
+  aspect-ratio: 1/1;
+  border-radius: 4px;
+  background: url('/images/main_lab_001.jpg') lightgray 50% / cover no-repeat;
+}
+
+.tenMinutes {
+  display: flex;
+  padding: 60px 16px;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 12px;
+  align-self: stretch;
+  width: 100%;
+  background: radial-gradient(88.91% 58.3% at 50% 50%, rgba(218, 171, 171, 0.50) 0%, rgba(218, 171, 171, 0.00) 87.65%);
+}
+
+.tenMinutesTitle {
+  color: var(--Grayscale-900, #010101);
+  text-align: center;
+  font-family: "Gowun Batang", serif;
+  font-size: 24px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: normal;
+  margin: 0;
+}
+
+.tenMinutesDescription {
+  color: var(--Grayscale-700, #3D3D3D);
+  text-align: center;
+  font-family: Pretendard, sans-serif;
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 300;
+  line-height: 130%;
+  margin: 0;
+}
+
+.testSequence {
+  display: flex;
+  width: 100%;
+  padding: 80px 16px;
+  justify-content: center;
+  align-items: center;
+  
+}
+
+.sequenceContent {
+  display: flex;
+  width: 360px;
+  flex-direction: column;
+  align-items: center;
+  gap: 24px;
+}
+
+.sequenceTextGroup {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  
+  align-self: stretch;
+}
+
+.sequenceTitle {
+  color: var(--Grayscale-900, #010101);
+  font-family: "Gowun Batang", serif;
+  font-size: 18px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: normal;
+  margin: 0;
+}
+
+.sequenceSubtitle {
+  color: #A65661;
+  font-family: "Gowun Batang", serif;
+  font-size: 16px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: normal;
+  margin: 0;
+}
+
+.sequenceSteps {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 11px;
+  align-self: stretch;
+}
+
+.stepCard {
+  display: flex;
+  padding: 16px 12px;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
+  align-self: stretch;
+  border-radius: 4px;
+  background: #F9F9F9;
+}
+
+.stepHeader {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 8px;
+}
+
+.stepNumber {
+  display: flex;
+  width: 20px;
+  height: 20px;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 4px;
+  aspect-ratio: 1/1;
+  border-radius: 2px;
+  background: #A65661;
+  color: #FFF;
+  font-family: "Gowun Batang", serif;
+  font-size: 12px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: normal;
+  flex-shrink: 0;
+}
+
+.stepTitle {
+  color: #A65661;
+  font-family: "Gowun Batang", serif;
+  font-size: 16px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: normal;
+  margin: 0;
+}
+
+.stepDescription {
+  color: var(--Grayscale-700, #3D3D3D);
+  font-family: Pretendard, sans-serif;
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 300;
+  line-height: normal;
+  margin: 0;
+  
+}
+
+.stepArrow {
+  width: 16px;
+  height: 45.336px;
+  flex-shrink: 0;
+}
+
+.testResult {
+  display: flex;
+  width: 100%;
+  padding: 0px 16px 80px;
+  justify-content: center;
+  align-items: center;
+  
+}
+
+.resultContent {
+  display: flex;
+  width: 360px;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+.resultTextGroup {
+  display: flex;
+  
+  flex-direction: column;
+  align-items: flex-start;
+  align-self: stretch;
+}
+
+.resultTitle {
+  color: var(--Grayscale-900, #010101);
+  font-family: "Gowun Batang", serif;
+  font-size: 18px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: normal;
+  margin: 0;
+}
+
+.resultSubtitle {
+  color: #A65661;
+  font-family: "Gowun Batang", serif;
+  font-size: 16px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: normal;
+  margin-bottom: 8px;
+}
+
+.resultDescription {
+  color: var(--Grayscale-700, #3D3D3D);
+  font-family: Pretendard, sans-serif;
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 300;
+  line-height: normal;
+  margin: 0;
+}
+
+.resultImage {
+  width: 328px;
+  height: 328px;
+  aspect-ratio: 1/1;
+  background: url('/images/test_chart.png') lightgray 50% / cover no-repeat;
+}
+
+.expectedEffect {
+  display: flex;
+  width: 100%;
+  padding: 0px 16px 80px;
+  justify-content: center;
+  align-items: center;
+  
+}
+
+.effectContent {
+  display: flex;
+  width: 360px;
+  flex-direction: column;
+  
+  gap: 32px;
+}
+
+.effectHeader {
+  display: flex;
+  
+  flex-direction: column;
+  align-self: stretch;
+}
+
+.effectTitle {
+  color: var(--Grayscale-900, #010101);
+  font-family: "Gowun Batang", serif;
+  font-size: 18px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: normal;
+  margin: 0;
+}
+
+.effectSubtitle {
+  color: #A65661;
+  font-family: "Gowun Batang", serif;
+  font-size: 16px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: normal;
+  margin-bottom: 8px;
+}
+
+.effectDescription {
+  color: var(--Grayscale-700, #3D3D3D);
+  font-family: Pretendard, sans-serif;
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 300;
+  line-height: normal;
+  margin: 0;
+}
+
+.effectCards {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 32px;
+  align-self: stretch;
+}
+
+.effectCard {
+  display: flex;
+  flex-direction: column;
+  
+  gap: 12px;
+  align-self: stretch;
+}
+
+.effectCardImage {
+  height: 328px;
+  align-self: stretch;
+  aspect-ratio: 1/1;
+  border-radius: 4px;
+  background-size: cover;
+  background-position: 50%;
+  background-repeat: no-repeat;
+  background-color: lightgray;
+}
+
+.effectCardText {
+  color: var(--Grayscale-700, #3D3D3D);
+  text-align: left;
+  font-family: Pretendard, sans-serif;
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 300;
+  line-height: normal;
+  margin: 0;
+}
+
+.goalSection {
+  display: flex;
+  height: 142px;
+  justify-content: center;
+  align-items: center;
+  align-self: stretch;
+  width: 100%;
+  background: radial-gradient(63.43% 50% at 50% 50%, rgba(218, 171, 171, 0.50) 0%, rgba(218, 171, 171, 0.00) 87.65%);
+}
+
+.goalText {
+  color: var(--Grayscale-900, #010101);
+  text-align: center;
+  font-family: "Gowun Batang", serif;
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 150%;
+  margin: 0;
+}
+
+.goalHighlight {
+  color: var(--Grayscale-900, #010101);
+  font-family: "Gowun Batang", serif;
+  font-size: 18px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 150%;
+}
+
+.goalMid {
+  color: var(--Grayscale-900, #010101);
+  font-family: "Gowun Batang", serif;
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 120%;
+}
+
+.goalEnd {
+  color: var(--Grayscale-900, #010101);
+  font-family: "Gowun Batang", serif;
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 170%;
+}
+
+.coffeeSection {
+  display: flex;
+  padding: 60px 16px;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 12px;
+  align-self: stretch;
+  width: 100%;
+  background: #F2E6E6;
+}
+
+.coffeeTitle {
+  color: var(--Grayscale-900, #010101);
+  text-align: center;
+  font-family: "Gowun Batang", serif;
+  font-size: 24px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: normal;
+  margin: 0;
+}
+
+.coffeeDescription {
+  color: var(--Grayscale-700, #3D3D3D);
+  text-align: center;
+  font-family: Pretendard, sans-serif;
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 300;
+  line-height: 130%;
+  margin: 0;
+}
+
+/* FAQ section */
+.faqSection {
+  display: flex;
+  padding: 60px 16px;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 30px;
+  align-self: stretch;
+  width: 100%;
+  background: #FFFFFF;
+}
+
+.faqContent {
+  display: flex;
+  width: 100%;
+  max-width: 360px;
+  flex-direction: column;
+  align-items: flex-start;
+  
+  margin: 0 auto;
+  
+}
+
+.faqTitle {
+  color: var(--Grayscale-900, #010101);
+  font-family: "Gowun Batang", serif;
+  font-size: 18px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: normal;
+  margin: 0;
+}
+
+.faqSubtitle {
+  color: #A65661;
+  font-family: "Gowun Batang", serif;
+  font-size: 16px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: normal;
+  margin-bottom: 30px;
+}
+
+.faqItem {
+  display: flex;
+  flex-direction: column;
+  align-self: stretch;
+  gap: 4px;
+  
+  border-bottom: 1px dashed rgba(0,0,0,0.06);
+  margin-bottom: 30px;
+}
+
+.faqItem:last-child {
+  margin-bottom: 0;
+}
+
+.faqQuestion {
+  color: var(--Grayscale-700, #3D3D3D);
+  font-family: Pretendard, sans-serif;
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: normal;
+  margin: 0;
+}
+
+.faqAnswer {
+  color: var(--Grayscale-700, #3D3D3D);
+  font-family: Pretendard, sans-serif;
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 300;
+  line-height: 160%;
+  margin: 0;
+}
+
+.ctaSection {
+  display: flex;
+  width: 100%;
+  padding: 80px 16px;
+  justify-content: center;
+  align-items: center;
+  
+}
+
+.ctaContent {
+  display: flex;
+  width: 100%;
+  max-width: 760px;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 12px;
+  padding: 0 16px;
+  margin: 0 auto;
+}
+
+.ctaButtonPrimary {
+  display: flex;
+  padding: 16px 24px;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  align-self: stretch;
+  border-radius: 4px;
+  background: #DAABAB;
+  color: #FFF;
+  font-family: Pretendard, sans-serif;
+  font-size: 16px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: normal;
+  border: none;
+  cursor: pointer;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.ctaButtonPrimary:hover {
+  background: #c99a9a;
+}
+
+.ctaButtonSecondary {
+  display: flex;
+  padding: 16px 24px;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  align-self: stretch;
+  border-radius: 4px;
+  background: #A65661;
+  color: #FFF;
+  font-family: Pretendard, sans-serif;
+  font-size: 16px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: normal;
+  border: none;
+  cursor: pointer;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.ctaButtonSecondary:hover {
+  background: #8e4a53;
+}
+
+.ctaDisclaimer {
+  color: var(--Grayscale-600, #656565);
+  text-align: center;
+  font-family: Pretendard, sans-serif;
+  font-size: 12px;
+  font-style: normal;
+  font-weight: 300;
+  line-height: 140%;
+  margin: 20px 0 0 0;
 }
 
 .main {

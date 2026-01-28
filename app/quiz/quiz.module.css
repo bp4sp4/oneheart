@@ -8,11 +8,30 @@
   margin-bottom: 32px;
 }
 
-.progressHeader {
+.headerCenter {
+  text-align: center;
+  margin-bottom: 10px;
+}
+
+.subtitle {
+  margin: 6px 0 0;
+  color: #6b7280;
+  font-size: 15px;
+  font-weight: 500;
+}
+
+.progressRow {
   display: flex;
-  justify-content: space-between;
   align-items: center;
-  margin-bottom: 12px;
+  gap: 12px;
+}
+
+.progressBox {
+  
+  border-radius: 12px;
+  padding: 8px 10px;
+  display: block;
+  
 }
 
 .title {
@@ -23,13 +42,17 @@
 }
 
 .stepBadge {
-  font-size: 16px;
-  font-weight: 600;
-  color: #3b82f6;
-  background: #eff6ff;
-  padding: 8px 16px;
-  border-radius: 12px;
-  border: 1px solid #bfdbfe;
+
+color: var(--Grayscale-600, #656565);
+text-align: right;
+font-family: Pretendard;
+font-size: 14px;
+font-style: normal;
+font-weight: 400;
+line-height: normal;
+  
+  
+  white-space: nowrap;
 }
 
 .progressBarContainer {
@@ -38,14 +61,17 @@
   border-radius: 20px;
   overflow: hidden;
   box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
+  flex: 1;
+  width: 100%;
 }
 
 .progressBarFill {
   height: 100%;
-  background: #3b82f6;
+  background: #A65661;
   border-radius: 20px;
   transition: width 0.5s ease;
-  box-shadow: 0 2px 8px rgba(59, 130, 246, 0.4);
+  box-shadow: 0 2px 8px rgba(166, 86, 97, 0.35);
+  min-width: 6px; /* visible even for very small percentages */
 }
 
 .description {
@@ -54,6 +80,9 @@
   line-height: 1.6;
   margin-bottom: 20px;
 }
+
+/* segments (desktop-hidden, mobile-visible) */
+/* no mobile segments; use continuous bar for all viewports */
 
 .navigationContainer {
   margin-top: 32px;
@@ -66,7 +95,7 @@
 }
 
 .navButton {
-  background: #3b82f6;
+  background: #A65661;
   color: #fff;
   border: none;
   padding: 14px 32px;
@@ -75,19 +104,19 @@
   font-weight: 600;
   cursor: pointer;
   transition: all 0.3s ease;
-  box-shadow: 0 2px 8px rgba(59, 130, 246, 0.3);
+  box-shadow: 0 2px 8px rgba(166, 86, 97, 0.3);
   min-width: 100px;
 }
 
 .navButton:disabled {
-  background: #e5e7eb;
-  color: #9ca3af;
+  background: #DBC1C5;
+  color: #fff;
   cursor: not-allowed;
   box-shadow: none;
 }
 
 .navButton:not(:disabled):hover {
-  background: #2563eb;
+  background: #943e4a;
 }
 
 .pageInfo {
@@ -97,7 +126,7 @@
 /* 모바일 대응 (360px) */
 @media (max-width: 480px) {
   .section {
-    padding: 16px 12px;
+    padding: 77px 16px;
   }
 
   .progressSection {
@@ -111,13 +140,29 @@
   }
 
   .title {
-    font-size: 20px;
-    text-align: center;
+   color: var(--Grayscale-800, #1D1D1D);
+text-align: center;
+font-family: Pretendard;
+font-size: var(--unit-7, 24px);
+font-style: normal;
+font-weight: 700;
+line-height: normal;
+margin-bottom: 8px;
+  }
+
+  .subtitle {
+color: var(--Grayscale-600, #656565);
+text-align: center;
+font-family: Pretendard;
+font-size: 14px;
+font-style: normal;
+font-weight: 400;
+line-height: normal;
   }
 
   .stepBadge {
     font-size: 14px;
-    padding: 6px 12px;
+  
     text-align: center;
   }
 
@@ -141,4 +186,65 @@
   .pageInfo {
     display: none;
   }
+
+  .progressRow {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 8px;
+  }
+
+  .stepBadge {
+    align-self: center;
+  }
+
+  .progressBarContainer {
+    height: 14px;
+  }
+
+  .progressBarFill {
+    min-width: 6px; /* ensure tiny progress remains visible */
+  }
+
+  /* make boxed row with badge on the right for small screens too */
+  .progressRow {
+    flex-direction: row;
+    align-items: center;
+    gap: 9px;
+  }
+
+  .progressBox {
+    padding: 8px 10px;
+  }
+
+  .progressBarContainer {
+    border: none;
+    background: #f4f6f8;
+    padding: 6px;
+    border-radius: 12px;
+    height: 12px;
+  }
+
+  /* keep continuous bar layout on mobile */
+  .progressRow {
+    flex-direction: row;
+    align-items: center;
+    gap: 9px;
+  }
+
+  .progressBarContainer {
+    border: none;
+    background: #f4f6f8;
+    padding: 0; /* remove inner padding so fill is fully visible */
+    border-radius: 12px;
+    height: 12px;
+  }
+
+  .progressBarFill {
+    display: block;
+    position: relative;
+    z-index: 2;
+    background: #A65661 !important;
+    min-width: 10px; /* ensure visible on narrow viewports */
+  }
+
 }

@@ -1,18 +1,21 @@
 import styles from './Header.module.css'
 import Image from 'next/image'
+import Link from 'next/link'
 
 export default function Header() {
   return (
     <header className={styles.header}>
       <div className={styles.container}>
         <div className={styles.logo}>
-          <Image 
-            src="/images/logo.png" 
-            alt="한마음연구소" 
-            width={120} 
-            height={36}
-            priority
-          />
+          <Link href="/">
+            <Image 
+              src="/images/logo.png" 
+              alt="한마음연구소" 
+              width={120} 
+              height={36}
+              priority
+            />
+          </Link>
         </div>
         <button className={styles.menuButton} aria-label="메뉴">
           <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 36 36" fill="none">

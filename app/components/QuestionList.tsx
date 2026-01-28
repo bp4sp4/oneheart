@@ -18,7 +18,21 @@ export default function QuestionList({
   originalIndices?: number[]
 }) {
   const options = [-2, -1, 0, 1, 2]
-  const labels = ['매우 그렇지 않다', '그렇지 않다', '보통이다', '그렇다', '매우 그렇다']
+  const labels = [
+    <>
+      매우
+      <br />
+      그렇지 않다
+    </>,
+    '그렇지 않다',
+    '보통이다',
+    '그렇다',
+    <>
+      매우
+      <br />
+      그렇다
+    </>,
+  ]
   const containerRef = useRef<HTMLDivElement | null>(null)
   const [activeIdx, setActiveIdx] = useState<number | null>(null)
 
@@ -77,9 +91,15 @@ export default function QuestionList({
             className={`${styles.item} ${unanswered ? styles.unanswered : ''} ${answered ? styles.answered : ''} ${isActive ? styles.active : ''}`} 
             data-rev={q.reversed ? 'rev' : ''}
           >
-            <div className={styles.qtext}>{q.text}</div>
+              <div className={styles.cardHeader}>
+                <div className={styles.qtext}>{q.text}</div>
+                <div className={styles.qMeta}>
+                
+                  {/* header button removed as requested */}
+                </div>
+              </div>
 
-            <div className={styles.scaleContainer}>
+              <div className={styles.scaleContainer}>
               <div className={styles.scaleLabels}>
                 <span className={styles.labelLeft}>{labels[0]}</span>
                 <span className={styles.labelRight}>{labels[labels.length - 1]}</span>

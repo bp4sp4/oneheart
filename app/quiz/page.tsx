@@ -13,70 +13,7 @@ export default function QuizPage() {
   const pay = search?.get('pay')
   const orderNoQuery = search?.get('orderNo')
 
-  const [recoveryCode, setRecoveryCode] = useState('')
-  const [showRecoveryInput, setShowRecoveryInput] = useState(false)
-  const [recoveryInput, setRecoveryInput] = useState('')
-
-  useEffect(() => {
-    // 복원 코드 생성 (없으면)
-    let code = localStorage.getItem('quizRecoveryCode')
-    if (!code) {
-      code = Array.from(crypto.getRandomValues(new Uint8Array(4)), byte => byte.toString(16).padStart(2, '0')).join('').toUpperCase()
-      localStorage.setItem('quizRecoveryCode', code)
-    }
-    setRecoveryCode(code)
-  }, [])
-
-  const handleRecoveryLoad = async () => {
-    if (!recoveryInput.trim()) return
-    // Validate code format: 8 hex characters
-    if (!/^[A-F0-9]{8}$/.test(recoveryInput.toUpperCase())) {
-      alert('유효하지 않은 코드 형식입니다. 8자리 16진수 코드를 입력하세요.')
-      return
-    }
-    const code = recoveryInput.toUpperCase()
-    
-    try {
-      // Load quiz order from server
-      const res = await fetch('/api/load-quiz-order', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ recoveryCode: code }) })
-      const json = await res.json()
-      if (res.ok && json.quizOrder) {
-        const quizOrder = json.quizOrder
-        const shuffled = quizOrder.map((idx: number) => ({ question: allQuestions[idx], originalIndex: idx }))
-        console.log('Loaded quiz order from server:', quizOrder, 'shuffled:', shuffled)
-        setShuffledQuestionsWithIndex(shuffled)
-        localStorage.setItem(`quizShuffle_${code}`, JSON.stringify(shuffled))
-        
-        // 복원 코드도 업데이트
-        setRecoveryCode(code)
-        localStorage.setItem('quizRecoveryCode', code)
-      } else {
-        console.error('Failed to load quiz order:', json)
-        alert('서버에서 퀴즈 순서를 불러올 수 없습니다.')
-        return
-      }
-    } catch (e) {
-      console.error('Error loading quiz order:', e)
-      alert('서버 오류가 발생했습니다.')
-      return
-    }
-
-    const stored = localStorage.getItem(`quizState_${code}`)
-    console.log('Loading state for code:', code, stored)
-    if (stored) {
-      const state = JSON.parse(stored)
-      console.log('Loaded state:', state)
-      setAnswers(state.answers || {})
-      setQuestionListKey((k) => k + 1)
-      setCurrentPage(state.currentPage || 0)
-      console.log('Set answers and currentPage')
-      setShowRecoveryInput(false)
-      alert('상태가 불러와졌어요!')
-    } else {
-      setShowRecoveryInput(false)
-      alert('퀴즈 순서를 불러왔습니다. 처음부터 시작하세요.')
-    }
-  }
+  
 
   useEffect(() => {
     // if redirected from Toss (pay=success), verify payment status before allowing the quiz
@@ -119,39 +56,18 @@ export default function QuizPage() {
   const [isMounted, setIsMounted] = useState(false)
   
   useEffect(() => {
-    if (!recoveryCode || allQuestions.length === 0) {
+    if (allQuestions.length === 0) {
       setIsMounted(true)
       return
     }
 
-    // 클라이언트에서만 랜덤화 실행
+    // 클라이언트에서만 랜덤화 실행 (임시 세션 전용)
     const base = allQuestions.map((q, idx) => ({ question: q, originalIndex: idx }))
-
-    // If we have a recoveryCode, persist and reuse the shuffled order so
-    // question positions remain stable across reloads (avoids random mismatch).
-    try {
-      const storedShuffle = localStorage.getItem(`quizShuffle_${recoveryCode}`)
-      if (storedShuffle) {
-        const parsed = JSON.parse(storedShuffle)
-        console.log('Using stored shuffle for code:', recoveryCode, parsed)
-        setShuffledQuestionsWithIndex(parsed)
-        setIsMounted(true)
-        return
-      }
-    } catch (e) {
-      console.warn('Failed to read stored shuffle', e)
-    }
-
     const shuffled = base.sort(() => Math.random() - 0.5)
-    console.log('Created new shuffle for code:', recoveryCode, shuffled)
+    console.log('Created new shuffle for session', shuffled)
     setShuffledQuestionsWithIndex(shuffled)
-    try {
-      localStorage.setItem(`quizShuffle_${recoveryCode}`, JSON.stringify(shuffled))
-    } catch (e) {
-      console.warn('Failed to save shuffle', e)
-    }
     setIsMounted(true)
-  }, [allQuestions, recoveryCode])
+  }, [allQuestions])
 
   const [currentPage, setCurrentPage] = useState(0)
   const pageSize = 10
@@ -163,64 +79,9 @@ export default function QuizPage() {
   const [calculatingProgress, setCalculatingProgress] = useState(0)
   const [questionListKey, setQuestionListKey] = useState(0)
 
-  // 퀴즈 상태 저장
-  useEffect(() => {
-    if (!recoveryCode) return
-
-    // Prevent overwriting an existing non-empty saved state with an empty `answers` on initial mount.
-    if (Object.keys(answers).length === 0) {
-      try {
-        const existing = localStorage.getItem(`quizState_${recoveryCode}`)
-        if (existing) {
-          const parsed = JSON.parse(existing)
-          if (parsed?.answers && Object.keys(parsed.answers).length > 0) {
-            console.log('Skipping save to avoid overwriting existing non-empty stored answers for code:', recoveryCode)
-            return
-          }
-        }
-      } catch (e) {
-        console.warn('Error reading existing stored state', e)
-      }
-    }
-
-    const state = { answers, currentPage }
-    const json = JSON.stringify(state)
-    console.log('Saving state for code:', recoveryCode, state, 'json:', json)
-    localStorage.setItem(`quizState_${recoveryCode}`, json)
-  }, [answers, currentPage, recoveryCode])
-
   useEffect(() => {
     console.log('Answers changed (effect):', answers)
   }, [answers])
-
-  // If a recoveryCode exists on mount and we have no answers yet,
-  // attempt to auto-load saved state so users can continue without manual input.
-  useEffect(() => {
-    if (!recoveryCode) return
-    if (Object.keys(answers).length > 0) {
-      console.log('Auto-load skipped: answers already present')
-      return
-    }
-    const stored = localStorage.getItem(`quizState_${recoveryCode}`)
-    console.log('Auto-check stored state for code:', recoveryCode, stored)
-    if (!stored) return
-    try {
-      const state = JSON.parse(stored)
-      if (state?.answers && Object.keys(state.answers).length > 0) {
-        console.log('Auto-loading state for code:', recoveryCode, state)
-        setAnswers(state.answers)
-        setQuestionListKey((k) => k + 1)
-        setCurrentPage(state.currentPage || 0)
-        setShowRecoveryInput(false)
-        // notify user gently
-        setTimeout(() => alert('이전 진행 상태를 자동으로 불러왔습니다.'), 100)
-      } else {
-        console.log('Stored state has no answers for code:', recoveryCode)
-      }
-    } catch (e) {
-      console.error('Failed to parse stored quiz state', e)
-    }
-  }, [recoveryCode])
 
   const questions = allQuestions
   const shuffledQuestions = shuffledQuestionsWithIndex
@@ -447,119 +308,39 @@ export default function QuizPage() {
       <Header />
 
       <section className={styles.section}>
-        {/* 복원 코드 */}
-        <div style={{ 
-          textAlign: 'center', 
-          marginBottom: 20, 
-          padding: 20, 
-          border: '1px solid #e1e5e9', 
-          borderRadius: 8, 
-          background: '#f8f9fa'
-        }}>
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 10 }}>
-            <div style={{ 
-              width: 24, 
-              height: 24, 
-              background: '#0064ff', 
-              borderRadius: '50%', 
-              display: 'flex', 
-              alignItems: 'center', 
-              justifyContent: 'center', 
-              marginRight: 8 
-            }}>
-              <span style={{ color: 'white', fontSize: '12px', fontWeight: 'bold' }}>💾</span>
-            </div>
-            <h3 style={{ margin: 0, fontSize: '16px', fontWeight: '600', color: '#333' }}>진행 상태 저장</h3>
-          </div>
-          <p style={{ fontSize: '18px', fontWeight: 'bold', margin: '10px 0', letterSpacing: '1px', color: '#0064ff' }}>{recoveryCode}</p>
-          <p style={{ margin: '10px 0', fontSize: '14px', color: '#666' }}>테스트 중간에 나가도 이 코드를 입력하면 이어서 진행할 수 있어요.</p>
-          <div style={{ display: 'flex', justifyContent: 'center', gap: '8px', alignItems: 'center', flexWrap: 'wrap' }}>
-            <button 
-              onClick={() => navigator.clipboard.writeText(recoveryCode).then(() => alert('복사되었습니다!'))} 
-              style={{ 
-                padding: '8px 12px', 
-                background: '#0064ff', 
-                border: 'none', 
-                borderRadius: 4, 
-                color: 'white', 
-                cursor: 'pointer',
-                fontSize: '14px',
-                fontWeight: '500'
-              }}
-            >
-              복사
-            </button>
-            <button 
-              onClick={() => setShowRecoveryInput(!showRecoveryInput)} 
-              style={{ 
-                padding: '8px 12px', 
-                background: 'white', 
-                border: '1px solid #0064ff', 
-                borderRadius: 4, 
-                color: '#0064ff', 
-                cursor: 'pointer',
-                fontSize: '14px',
-                fontWeight: '500'
-              }}
-            >
-              {showRecoveryInput ? '닫기' : '불러오기'}
-            </button>
-          </div>
-          {showRecoveryInput && (
-            <div style={{ marginTop: 15 }}>
-              <input
-                type="text"
-                value={recoveryInput}
-                onChange={(e) => setRecoveryInput(e.target.value.toUpperCase())}
-                placeholder="저장 코드를 입력하세요"
-                style={{ 
-                  width: '100%', 
-                  padding: 10, 
-                  borderRadius: 4, 
-                  border: '1px solid #ddd', 
-                  fontSize: '14px',
-                  marginBottom: 10,
-                  textAlign: 'center',
-                  letterSpacing: '1px'
-                }}
-              />
-              <button 
-                onClick={handleRecoveryLoad} 
-                style={{ 
-                  width: '100%',
-                  padding: '10px', 
-                  background: '#0064ff', 
-                  border: 'none', 
-                  borderRadius: 4, 
-                  color: 'white', 
-                  cursor: 'pointer',
-                  fontSize: '14px',
-                  fontWeight: '500'
-                }}
-              >
-                불러오기
-              </button>
-            </div>
-          )}
-        </div>
 
         {/* 프로그레스 바 */}
         <div className={styles.progressSection}>
-          <div className={styles.progressHeader}>
+          <div className={styles.headerCenter}>
             <h2 className={styles.title}>엄마 유형 테스트</h2>
-            <span className={styles.stepBadge}>
-              {currentPage + 1} / {totalPages} 단계
-            </span>
+            <p className={styles.subtitle}>빠르게 체크하고 지금의 성향을 확인해 보세요.</p>
           </div>
-          <div className={styles.progressBarContainer}>
-            <div 
-              className={styles.progressBarFill}
-              style={{ width: `${((currentPage + 1) / totalPages) * 100}%` }}
-            ></div>
+
+          <div className={styles.progressBox}>
+            <div className={styles.progressRow}>
+              <div className={styles.progressBarContainer}>
+                  {(() => {
+                    const percent = ((currentPage + 1) / totalPages) * 100
+                    const minPercent = 100 / Math.max(1, totalPages)
+                    const fillPercent = Math.max(percent, minPercent)
+                    return (
+                      <div
+                        className={styles.progressBarFill}
+                        style={{ width: `${fillPercent}%` }}
+                      />
+                    )
+                  })()}
+                </div>
+
+              {/* continuous progress bar (same on mobile and desktop) */}
+              <span className={styles.stepBadge}>
+                {currentPage + 1} / {totalPages} 페이지
+              </span>
+            </div>
           </div>
         </div>
 
-        <p className={styles.description}>아래에 100문항 스켈레톤이 보입니다. 각 문항에 응답한 뒤 '점수 계산'을 눌러 결과를 확인하세요.</p>
+        
 
         <QuestionList 
           key={questionListKey}
@@ -616,12 +397,12 @@ export default function QuizPage() {
             className={styles.navButton}
             onMouseEnter={(e) => {
               if (currentPage !== 0) {
-                e.currentTarget.style.background = '#2563eb'
+                e.currentTarget.style.background = '#943e4a'
               }
             }}
             onMouseLeave={(e) => {
               if (currentPage !== 0) {
-                e.currentTarget.style.background = '#3b82f6'
+                e.currentTarget.style.background = '#A65661'
               }
             }}
           >
@@ -659,12 +440,12 @@ export default function QuizPage() {
             className={styles.navButton}
             onMouseEnter={(e) => {
               if (currentPage < totalPages - 1) {
-                e.currentTarget.style.background = '#2563eb'
+                e.currentTarget.style.background = '#943e4a'
               }
             }}
             onMouseLeave={(e) => {
               if (currentPage < totalPages - 1) {
-                e.currentTarget.style.background = '#3b82f6'
+                e.currentTarget.style.background = '#A65661'
               }
             }}
           >
@@ -714,7 +495,7 @@ function FinalControls({
         <button 
           onClick={calculateScore} 
           style={{ 
-            background: '#3b82f6',
+            background: '#A65661',
             color: '#fff',
             border: 'none',
             padding: '16px 40px',
@@ -722,14 +503,14 @@ function FinalControls({
             fontSize: '16px',
             fontWeight: '600',
             cursor: 'pointer',
-            boxShadow: '0 4px 12px rgba(59, 130, 246, 0.3)',
+            boxShadow: '0 4px 12px rgba(166, 86, 97, 0.3)',
             transition: 'all 0.3s ease'
           }}
           onMouseEnter={(e) => {
-            e.currentTarget.style.background = '#2563eb'
+            e.currentTarget.style.background = '#943e4a'
           }}
           onMouseLeave={(e) => {
-            e.currentTarget.style.background = '#3b82f6'
+            e.currentTarget.style.background = '#A65661'
           }}
         >
           점수 계산

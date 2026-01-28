@@ -1,10 +1,13 @@
 import { useState } from 'react'
+import { RadarChartRef } from './RadarChart'
 import styles from './ShareControls.module.css'
 
 export default function ShareControls({
   mapping,
+  chartRef,
 }: {
   mapping: { code: string; label: string; summary: string } | null
+  chartRef?: React.RefObject<RadarChartRef>
 }) {
   const [email, setEmail] = useState('')
   const [sending, setSending] = useState(false)
@@ -24,6 +27,12 @@ export default function ShareControls({
 
     setSending(true)
     setMessage(null)
+
+    // 차트 이미지 가져오기
+    let chartImage: string | null = null
+    if (chartRef?.current) {
+      chartImage = chartRef.current.getChartImage()
+    }
 
     const subject = `엄마 유형 테스트 결과 — ${mapping.label} (${mapping.code})`
     const origin = typeof window !== 'undefined' ? window.location.origin : 'https://oneheart.kr'
@@ -45,6 +54,13 @@ export default function ShareControls({
               ${mapping.code} — ${mapping.label}
             </div>
           </div>
+
+          ${chartImage ? `
+          <div style="background:#fff;border-radius:18px;box-shadow:0 10px 30px rgba(17,24,39,.08);padding:22px 20px;margin-top:14px;text-align:center;">
+            <div style="font-size:16px;font-weight:800;color:#111827;margin-bottom:16px;">나의 반응 성향 분포</div>
+            <img src="${chartImage}" alt="반응 성향 레이더 차트" style="max-width:100%;height:auto;"/>
+          </div>
+          ` : ''}
 
           <div style="background:#fff;border-radius:18px;box-shadow:0 10px 30px rgba(17,24,39,.08);padding:22px 20px;margin-top:14px;">
             <div style="font-size:16px;font-weight:800;color:#111827;">핵심 해석</div>

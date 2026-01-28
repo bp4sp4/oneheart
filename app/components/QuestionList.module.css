@@ -1,68 +1,75 @@
-/* 자기 차례가 아닐 때 전체 카드 연회색 배경 + 흐림 */
-.answered {
-  background: #f3f4f6 !important;
-  opacity: 0.6;
-}
-/* 자기 차례가 아닐 때(answered) 원(circle)도 흐리게 */
-.answered .circle {
-  opacity: 0.6;
-  border-color: #d1d5db;
-}
+/* Global styles (mobile layout applied everywhere) */
 
-.answered .selected .circle {
-  opacity: 0.6;
-  border-color: #d1d5db;
-  .item {
-    background: #f3f4f6;
-    border: 1px solid #e5e7eb;
-    padding: 32px;
-    border-radius: 16px;
-    transition: all 0.3s ease;
-  }
-}
-/* 모든 활성화 항목에 배경, 그림자, border-color까지 완전 강제 */
-
+/* (answered rules defined later) */
 
 .list {
   display: flex;
   flex-direction: column;
-  gap: 32px;
-  max-width: 1000px;
+  gap: 24px;
+  max-width: 360px;
   margin: 0 auto;
-  padding: 40px 20px;
+  
 }
 
 .item {
-  background: #fff !important;
-  border: 1px solid #e5e7eb;
-  padding: 32px;
-  border-radius: 16px;
-  transition: all 0.3s ease;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: flex-start;
+  align-self: stretch;
+  height: 170px;
+  background: #FFF;
+  border: 1px solid var(--Grayscale-100, #F2F2F2);
+  
+  border-radius: 12px;
+  opacity: 0.95;
+  transition: all 0.18s ease;
 }
-
-/* 어떤 상태든 .item, .option, .circle에 배경색이 들어가지 않도록 강제 */
-
-
-
 
 .qtext {
-  font-size: 18px;
-  font-weight: 500;
-  color: #1f2937;
-  line-height: 1.6;
-  margin-bottom: 32px;
+  color: var(--Grayscale-900, #010101);
+  font-family: Pretendard;
+  font-size: 16px;
+  font-style: normal;
+  font-weight: 600;
+  line-height: 130%;
+  margin: 0 0 24px 0;
   text-align: left;
-  transition: all 0.3s ease;
 }
 
-/* 활성화된 문항의 라벨도 진하게 */
+.cardHeader {
+  display: flex;
+  width: 100%;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.qMeta {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 8px;
+}
+
+.smallLabel {
+  color: var(--Grayscale-900, #010101);
+  font-family: Pretendard;
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 130%;
+  text-align: right;
+}
+
+.circleBtn {
+  display: none; /* header button removed per request */
+}
+
 .active .labelLeft,
 .active .labelRight {
-  
   color: #374151;
 }
 
-/* 답변 완료된 질문은 비활성화 스타일 */
 .answered .qtext {
   opacity: 0.6;
 }
@@ -71,165 +78,269 @@
 .answered .labelRight {
   opacity: 0.6;
 }
+
 .scaleContainer {
   width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
 }
 
 .scaleLabels {
   display: flex;
   justify-content: space-between;
-  margin-bottom: 20px;
-  padding: 0 10px;
+  margin-bottom: 0px;
+  padding: 0 5px;
 }
 
+.scaleLabels span {
+  flex: 1;
+}
+
+.labelLeft {
+  text-align: left;
+  font-size: 13px;
+}
+
+.labelRight {
+  text-align: right;
+  font-size: 13px;
+}
 
 .options {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  gap: 12px;
+  
   width: 100%;
-  padding: 0 10px;
+  padding: 0 5px;
 }
-
-.option {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  cursor: pointer;
-  position: relative;
-  flex: 1;
-}
-
-.option input {
-  position: absolute;
-  opacity: 0;
-  cursor: pointer;
-}
-
-.circle {
-  width: 50px;
-  height: 50px;
-  border-radius: 50%;
-  border: 3px solid #e5e7eb;
-  background: transparent;
-  transition: all 0.3s ease;
-  position: relative;
-}
-
-/* 답변 대기 중인 문항: 모든 원이 초록색 테두리 (불이 켜진 느낌) */
-.unanswered .circle {
-  border-color: #10b981;
-  background: transparent;
-  opacity: 1;
-}
-
-.option:hover .circle {
-  transform: scale(1.1);
-  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
-}
-
-/* 미답변 상태의 선택된 원: 테두리만 보이도록 */
-.unanswered .selected .circle {
-  border-color: #10b981;
-  background: transparent !important;
-  box-shadow: 0 2px 8px rgba(16, 185, 129, 0.3);
-  transform: scale(1.05);
-}
-
-/* 선택된 원에 체크마크 표시 */
-.selected .circle::after {
-  content: '✓';
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  color: #10b981;
-  font-size: 28px;
-  font-weight: bold;
-  line-height: 1;
-}
-
-/* 답변 완료된 질문의 선택되지 않은 원: 회색으로 거의 안 보이게 */
-.answered .option:not(.selected) .circle {
-  border-color: #d1d5db;
-  background: transparent;
-  opacity: 0.3;
-}
-
-/* 답변 완료된 질문의 선택된 원: 흐리게(비활성화) */
-.answered .selected .circle {
-  border-color: #d1d5db;
-  background: transparent;
-  opacity: 0.3;
-}
-
-/* 미답변 질문에서 호버 시 */
-.unanswered .option:hover .circle {
-  transform: scale(1.1);
-  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
-}
-
-.revbtn {
-  display: none;
-}
-
-.optLabel {
-  display: none;
-}
-
-/* 모바일 대응 (360px) */
-@media (max-width: 480px) {
-  .list {
-    gap: 24px;
-    padding: 20px 12px;
+  /* 자기 차례가 아닐 때 전체 카드 연회색 배경 + 흐림 */
+  .answered {
+    background: #f3f4f6 !important;
+    opacity: 0.6;
+  }
+  /* 자기 차례가 아닐 때(answered) 원(circle)도 흐리게 */
+  .answered .circle {
+    opacity: 0.6;
+    border-color: #d1d5db;
   }
 
+  .answered .selected .circle {
+    opacity: 0.6;
+    border-color: #d1d5db;
+  }
+
+  .answered .item {
+    background: #f3f4f6;
+    border: 1px solid #e5e7eb;
+    padding: 32px;
+    border-radius: 16px;
+    transition: all 0.3s ease;
+  }
+
+
   .item {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: flex-start;
+    align-self: stretch;
+    height: 170px;
+    background: #FFF;
+    border: 1px solid var(--Grayscale-100, #F2F2F2);
     padding: 20px 16px;
     border-radius: 12px;
+    opacity: 0.95;
+    transition: all 0.18s ease;
   }
 
   .qtext {
+    color: var(--Grayscale-900, #010101);
+    font-family: Pretendard;
     font-size: 16px;
-    margin-bottom: 24px;
+    font-style: normal;
+    font-weight: 600;
+    line-height: 130%;
+    margin: 0 0 24px 0;
+    text-align: left;
   }
 
-  .active .qtext {
-    font-size: 17px;
+  .cardHeader {
+    display: flex;
+    width: 100%;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 12px;
+  }
+
+  .qMeta {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 8px;
+  }
+
+  .smallLabel {
+    color: var(--Grayscale-900, #010101);
+    font-family: Pretendard;
+    font-size: 12px;
+    font-weight: 600;
+    line-height: 130%;
+    text-align: right;
+  }
+
+  .circleBtn {
+    display: none; /* header button removed on mobile per request */
+  }
+
+  .active .labelLeft,
+  .active .labelRight {
+    color: #374151;
+  }
+
+  .answered .qtext {
+    opacity: 0.6;
+  }
+
+  .answered .labelLeft,
+  .answered .labelRight {
+    opacity: 0.6;
+  }
+
+  .scaleContainer {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
   }
 
   .scaleLabels {
-    margin-bottom: 16px;
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 0px !important;
     padding: 0 5px;
   }
-  .item.active {
-    background: #fff;
+
+  .scaleLabels span {
+    flex: 1;
   }
 
-  .labelLeft,
+  .labelLeft {
+    text-align: left;
+    font-size: 13px;
+  }
+
   .labelRight {
+    text-align: right;
     font-size: 13px;
   }
 
   .options {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
     gap: 8px;
+    width: 100%;
     padding: 0 5px;
   }
 
-  .circle {
-    width: 40px;
-    height: 40px;
-    border: 2px solid #d1d5db;
+  .option {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    cursor: pointer;
+    position: relative;
+   
   }
 
+  .option input {
+    position: absolute;
+    opacity: 0;
+    cursor: pointer;
+  }
+
+  .circle {
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    border: 1px solid var(--Grayscale-400, #d1d5db);
+    background: #ffffff;
+    transition: all 0.12s ease;
+    position: relative;
+    box-sizing: border-box;
+    flex-shrink: 0;
+  }
+
+  .unanswered .circle {
+    border-color: var(--Grayscale-400, #d1d5db);
+    background: #ffffff;
+    opacity: 1;
+  }
+
+  .option:hover .circle {
+    transform: scale(1.05);
+    box-shadow: 0 6px 18px rgba(16, 24, 40, 0.06);
+  }
+
+  .unanswered .selected .circle {
+    /* selected state: use dark gray when actively selecting */
+    border-color: #3D3D3D !important;
+    background: #3D3D3D !important;
+    border-radius: 11px;
+    transform: scale(1.02);
+  }
+
+  .selected .circle {
+    /* selected: light gray */
+    background: #9b9b9b !important;
+    border-color: #9b9b9b !important;
+    border-radius: 11px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.12);
+  }
   .selected .circle::after {
-    font-size: 20px;
-    width: 18px;
-    height: 18px;
+    content: '';
+    position: absolute;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    line-height: 1;
+    width: 12px;
+    height: 9px;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='9' height='7' viewBox='0 0 9 7' fill='none'><path d='M6.88471 0.206803C7.02558 0.0726919 7.21303 -0.00145012 7.40753 2.14954e-05C7.60202 0.00149312 7.78833 0.0784635 7.92716 0.214691C8.06598 0.350918 8.14645 0.535747 8.15159 0.730177C8.15673 0.924607 8.08614 1.11343 7.95471 1.2568L3.96471 6.2468C3.8961 6.3207 3.81329 6.38001 3.72124 6.42117C3.62919 6.46233 3.52978 6.48451 3.42896 6.48638C3.32814 6.48825 3.22798 6.46976 3.13447 6.43204C3.04095 6.39431 2.95601 6.33811 2.88471 6.2668L0.238708 3.6208C0.165022 3.55214 0.105919 3.46934 0.0649275 3.37734C0.0239355 3.28534 0.0018935 3.18603 0.00011672 3.08533C-0.00166006 2.98462 0.0168648 2.88459 0.0545858 2.79121C0.0923068 2.69782 0.148451 2.61298 0.21967 2.54176C0.290889 2.47055 0.375723 2.4144 0.469111 2.37668C0.562499 2.33896 0.662528 2.32043 0.763231 2.32221C0.863934 2.32399 0.963247 2.34603 1.05525 2.38702C1.14725 2.42801 1.23005 2.48712 1.29871 2.5608L3.39271 4.6538L6.86571 0.228803L6.88471 0.206803Z' fill='white'/></svg>");
+    background-size: contain;
+    background-position: center;
+    background-repeat: no-repeat;
+    display: block !important;
+    pointer-events: none;
+    z-index: 1;
   }
-}
+
+  .answered .option:not(.selected) .circle {
+    border-color: #d1d5db;
+    background: transparent;
+    opacity: 0.3;
+  }
+
+  .answered .selected .circle {
+    /* answered questions: use light gray */
+    border-color: #9b9b9b !important;
+    background: #9b9b9b !important;
+    border-radius: 11px;
+    opacity: 1;
+  }
+
+  .answered .selected .circle::after {
+    display: block !important;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='9' height='7' viewBox='0 0 9 7' fill='none'><path d='M6.88471 0.206803C7.02558 0.0726919 7.21303 -0.00145012 7.40753 2.14954e-05C7.60202 0.00149312 7.78833 0.0784635 7.92716 0.214691C8.06598 0.350918 8.14645 0.535747 8.15159 0.730177C8.15673 0.924607 8.08614 1.11343 7.95471 1.2568L3.96471 6.2468C3.8961 6.3207 3.81329 6.38001 3.72124 6.42117C3.62919 6.46233 3.52978 6.48451 3.42896 6.48638C3.32814 6.48825 3.22798 6.46976 3.13447 6.43204C3.04095 6.39431 2.95601 6.33811 2.88471 6.2668L0.238708 3.6208C0.165022 3.55214 0.105919 3.46934 0.0649275 3.37734C0.0239355 3.28534 0.0018935 3.18603 0.00011672 3.08533C-0.00166006 2.98462 0.0168648 2.88459 0.0545858 2.79121C0.0923068 2.69782 0.148451 2.61298 0.21967 2.54176C0.290889 2.47055 0.375723 2.4144 0.469111 2.37668C0.562499 2.33896 0.662528 2.32043 0.763231 2.32221C0.863934 2.32399 0.963247 2.34603 1.05525 2.38702C1.14725 2.42801 1.23005 2.48712 1.29871 2.5608L3.39271 4.6538L6.86571 0.228803L6.88471 0.206803Z' fill='white'/></svg>");
+  }
+
+
+
+  .revbtn {
+    display: none;
+  }
+
+  .optLabel {
+    display: none;
+  }
+
