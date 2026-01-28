@@ -74,11 +74,11 @@
 
 .about {
   display: flex;
-  width: 100%;
+  max-width: 360px;
   padding: 80px 16px;
   justify-content: center;
   align-items: center;
-  
+  margin: 0 auto;
 }
 
 .aboutContent {
