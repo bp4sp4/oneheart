@@ -1,6 +1,6 @@
 'use client'
 
-import React from 'react';
+import React, { useState } from 'react';
 import { MotherType } from '../../data/motherTypes';
 import RadarChart from './RadarChart';
 import styles from './ResultDisplay.module.css';
@@ -13,6 +13,59 @@ interface ResultDisplayProps {
 }
 
 export default function ResultDisplay({ motherType, axisSums, counts }: ResultDisplayProps) {
+  const [toast, setToast] = useState<string | null>(null);
+  const [sending, setSending] = useState(false);
+  const [email, setEmail] = useState('');
+  const [emailConfirm, setEmailConfirm] = useState('');
+
+  // 간단한 이메일 유효성
+  function validateEmail(email: string) {
+    return /.+@.+\..+/.test(email);
+  }
+
+  async function handleSendEmail() {
+    if (sending) return;
+    if (!validateEmail(email)) {
+      setToast('이메일 주소를 올바르게 입력해주세요.');
+      return;
+    }
+    if (email !== emailConfirm) {
+      setToast('이메일 주소가 일치하지 않습니다.');
+      return;
+    }
+    setSending(true);
+    setToast(null);
+    try {
+      const res = await fetch('/api/send-result', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          to: email,
+          subject: '엄마유형테스트 결과',
+          html: `<div><b>엄마유형: ${motherType.label}</b><br/>결과를 확인해보세요!</div>`
+        })
+      });
+      if (res.ok) {
+        setToast('이메일이 성공적으로 전송되었습니다!');
+      } else {
+        const data = await res.json().catch(() => ({}));
+        setToast(data.error || '이메일 전송에 실패했습니다.');
+      }
+    } catch (e) {
+      setToast('이메일 전송 중 오류가 발생했습니다.');
+    } finally {
+      setSending(false);
+    }
+  }
+
+  // 토스트 자동 사라짐
+  React.useEffect(() => {
+    if (toast) {
+      const t = setTimeout(() => setToast(null), 2500);
+      return () => clearTimeout(t);
+    }
+  }, [toast]);
+
   return (
     <div className={styles.container}>
       {/* 통합 섹션 - 1-5페이지 */}
@@ -219,22 +272,29 @@ export default function ResultDisplay({ motherType, axisSums, counts }: ResultDi
             type="email"
             placeholder="이메일 주소"
             className={styles.emailInput}
+            value={email}
+            onChange={e => setEmail(e.target.value)}
+            disabled={sending}
           />
           <input 
             type="text"
             placeholder="이메일 확인"
             className={styles.emailInputConfirm}
+            value={emailConfirm}
+            onChange={e => setEmailConfirm(e.target.value)}
+            disabled={sending}
           />
         </div>
-        
         <p className={styles.emailNotice}>
           *이메일은 최초 1회만 전송가능하므로,<br/>
           입력하신 이메일 주소의 정확성을 꼭 확인해주세요.
         </p>
-        
-        <button className={styles.emailButton}>
-          이메일로 결과 받기
+        <button className={styles.emailButton} onClick={handleSendEmail} disabled={sending}>
+          {sending ? '전송 중...' : '이메일로 결과 받기'}
         </button>
+        {toast && (
+          <div className={styles.toast}>{toast}</div>
+        )}
       </div>
     </div>
   )
