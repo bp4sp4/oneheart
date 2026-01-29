@@ -38,7 +38,7 @@ export default function ResultDisplay({ motherType, axisSums, counts }: ResultDi
     setToast(null);
     try {
       // 차트 이미지 캡처
-      const chartImageData = chartRef.current?.getChartImage();
+      const chartImageData = chartRef.current?.getChartImage(true);
       
       // 이미지 절대경로 변환 - 확실하게 처리
       const getAbsoluteUrl = (url: string) => {

@@ -27,14 +27,13 @@ interface RadarChartProps {
     negative: number
     sum: number
   }[]
-  hidePercentLabels?: boolean
 }
 
 export interface RadarChartRef {
-  getChartImage: (hidePercentLabels?: boolean) => string | null
+  getChartImage: (hide?: boolean) => string | null
 }
 
-const RadarChart = forwardRef<RadarChartRef, RadarChartProps>(({ counts, hidePercentLabels = false }, ref) => {
+const RadarChart = forwardRef<RadarChartRef, RadarChartProps>(({ counts }, ref) => {
   const chartRef = useRef<any>(null)
 
   useImperativeHandle(ref, () => ({
@@ -81,16 +80,16 @@ const RadarChart = forwardRef<RadarChartRef, RadarChartProps>(({ counts, hidePer
     'T'
   ]
 
-  // 원본 데이터 계산
+  // 원본 데이터 계산 (counts가 없거나 일부 항목이 없을 수 있으므로 안전하게 처리)
   const rawData = [
-    (counts[0].positive / 25) * 100, // R (A축 positive)
-    (counts[2].positive / 25) * 100, // P (C축 positive)
-    (counts[1].positive / 25) * 100, // S (B축 positive)
-    (counts[3].positive / 25) * 100, // C (D축 positive)
-    (counts[0].negative / 25) * 100, // E (A축 negative)
-    (counts[1].negative / 25) * 100, // L (B축 negative)
-    (counts[2].negative / 25) * 100, // O (C축 negative)
-    (counts[3].negative / 25) * 100, // T (D축 negative)
+    ((counts && counts[0] && typeof counts[0].positive === 'number' ? counts[0].positive : 0) / 25) * 100,
+    ((counts && counts[2] && typeof counts[2].positive === 'number' ? counts[2].positive : 0) / 25) * 100,
+    ((counts && counts[1] && typeof counts[1].positive === 'number' ? counts[1].positive : 0) / 25) * 100,
+    ((counts && counts[3] && typeof counts[3].positive === 'number' ? counts[3].positive : 0) / 25) * 100,
+    ((counts && counts[0] && typeof counts[0].negative === 'number' ? counts[0].negative : 0) / 25) * 100,
+    ((counts && counts[1] && typeof counts[1].negative === 'number' ? counts[1].negative : 0) / 25) * 100,
+    ((counts && counts[2] && typeof counts[2].negative === 'number' ? counts[2].negative : 0) / 25) * 100,
+    ((counts && counts[3] && typeof counts[3].negative === 'number' ? counts[3].negative : 0) / 25) * 100,
   ]
 
   // 자연스럽게 강조: 1.6배 증폭하되 100을 넘으면 100으로 제한
@@ -102,6 +101,8 @@ const RadarChart = forwardRef<RadarChartRef, RadarChartProps>(({ counts, hidePer
       {
         label: '나의 반응 성향',
         data,
+        spanGaps: true,
+        tension: 0,
         backgroundColor: 'rgba(218, 171, 171, 0.2)',
         borderColor: 'rgba(218, 171, 171, 1)',
         borderWidth: 2,
@@ -125,7 +126,7 @@ const RadarChart = forwardRef<RadarChartRef, RadarChartProps>(({ counts, hidePer
         suggestedMin: 0,
         suggestedMax: 100,
         ticks: {
-          display: !hidePercentLabels,
+          display: true,
           stepSize: 20,
           color: '#F1F1F1',
           font: {
