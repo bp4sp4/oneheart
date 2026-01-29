@@ -27,13 +27,14 @@ interface RadarChartProps {
     negative: number
     sum: number
   }[]
+  hidePercentLabels?: boolean
 }
 
 export interface RadarChartRef {
   getChartImage: () => string | null
 }
 
-const RadarChart = forwardRef<RadarChartRef, RadarChartProps>(({ counts }, ref) => {
+const RadarChart = forwardRef<RadarChartRef, RadarChartProps>(({ counts, hidePercentLabels = false }, ref) => {
   const chartRef = useRef<any>(null)
 
   useImperativeHandle(ref, () => ({
@@ -102,7 +103,7 @@ const RadarChart = forwardRef<RadarChartRef, RadarChartProps>(({ counts }, ref) 
         suggestedMin: 0,
         suggestedMax: 100,
         ticks: {
-          display: true,
+          display: !hidePercentLabels,
           stepSize: 20,
           color: '#F1F1F1',
           font: {
