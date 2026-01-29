@@ -64,7 +64,7 @@ export default function ResultDisplay({ motherType, axisSums, counts }: ResultDi
   <table width="100%" max-width="360px" cellpadding="0" cellspacing="0" border="0" style="background:linear-gradient(180deg, #F2E6E6 0%, #A65661 100%);min-height:600px;padding:40px 20px;">
     <tr>
       <td align="center">
-        <table width="360" cellpadding="0" cellspacing="0" border="0" style="max-width:360px;">
+        <table width="360" cellpadding="0" cellspacing="0" border="0" style="width:360px;margin:0 auto;">
           <tr>
             <td>
     
@@ -159,14 +159,14 @@ export default function ResultDisplay({ motherType, axisSums, counts }: ResultDi
     </div>
 
     <!-- 4. 강점과 특징 -->
-    <div style="display:flex;padding:16px 12px;flex-direction:column;align-items:center;background:#FFF;">
+    <div style="display:flex;padding:20px 16px;flex-direction:column;align-items:center;background:#FFF;">
       <div style="text-align:center;margin-bottom:12px;">
         <span style="display:inline-block;padding:10px 14px;background:#F8EFEF;border-radius:20px;font-size:14px;font-weight:700;color:#010101;">강점과 특징</span>
       </div>
-      <div style="width:100%; max-width:360px;">
-        <div style="background:#FAFAFA;border:1px solid #F2F2F2;border-radius:8px;padding:16px 14px;">
+        <div style="width:100%; max-width:360px;">
+        <div style="background:#FAFAFA;border:1px solid #F2F2F2;border-radius:8px;padding:16px 14px;margin-bottom:10px;">
           <div style="color:#919191;font-size:14px;font-weight:500;margin-bottom:8px;">당신의 강점</div>
-          <div style="color:#3D3D3D;font-size:14px;font-weight:400;line-height:1.6;text-align:justify;  margin-bottom : 10px;">${motherType.coreStrengths.details[0]}</div>
+          <div style="color:#3D3D3D;font-size:14px;font-weight:400;line-height:1.6;text-align:justify;">${motherType.coreStrengths.details[0]}</div>
         </div>
         <div style="background:#FAFAFA;border:1px solid #F2F2F2;border-radius:8px;padding:20px 18px;">
           <div style="color:#919191;font-size:14px;font-weight:500;margin-bottom:8px;">핵심 특징</div>
@@ -183,7 +183,7 @@ export default function ResultDisplay({ motherType, axisSums, counts }: ResultDi
       <div style="text-align:center;margin-bottom:16px;">
         <span style="display:inline-block;padding:10px 14px;background:#F8EFEF;border-radius:20px;font-size:14px;font-weight:700;color:#010101;">걱정 포인트</span>
       </div>
-      <div style="width:100%;max-width:384px;">
+      <div style="width:100%;max-width:360px;">
         <div style="background:#FAFAFA;border:1px solid #F2F2F2;border-radius:8px;padding:16px 14px;margin-bottom:8px;">
           <div style="color:#919191;font-size:14px;font-weight:500;margin-bottom:8px;">자주 걱정하는 상황 TOP 5</div>
           <ul style="margin:0;padding:0;list-style:none;">
@@ -206,9 +206,9 @@ export default function ResultDisplay({ motherType, axisSums, counts }: ResultDi
     </div>
 
     <!-- 6. 방향 제안 -->
-    <div style="display:flex;padding:16px 12px;flex-direction:column;align-items:center;background:#FFF;">
-      <div style="text-align:center; ">
-        <span style="display:inline-block;padding:10px 14px;background:#F8EFEF;border-radius:20px;font-size:14px;font-weight:700;color:#010101; margin-top :10px;">방향 제안</span>
+    <div style="display:flex;padding:20px 16px;flex-direction:column;align-items:center;background:#FFF;">
+        <div style="text-align:center; ">
+        <span style="display:inline-block;padding:10px 14px;background:#F8EFEF;border-radius:20px;font-size:14px;font-weight:700;color:#010101; margin-top:10px; margin-bottom:10px;">방향 제안</span>
       </div>
       <div style="width:100%; max-width:360px;">
         <div style="background:#FAFAFA;border:1px solid #F2F2F2;border-radius:8px;padding:16px 14px;margin-bottom:12px;">
@@ -381,7 +381,7 @@ export default function ResultDisplay({ motherType, axisSums, counts }: ResultDi
         <div className={styles.strengthsContainer}>
           {/* 당신의 강점 */}
             <div className={styles.badge}>강점과 특징</div>
-          <div className={styles.strengthsBox}>
+            <div className={styles.strengthsBox}>
             <div className={styles.strengthsTitle}>당신의 강점</div>
             <div className={styles.strengthsDescription}>
               {motherType.coreStrengths.details[0]}

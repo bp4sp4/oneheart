@@ -4,7 +4,7 @@ import '../styles/tokens.css'
 import '../styles/base.css'
 import '../styles/layout.css'
 import '../styles/components.css'
-import Footer from './components/Footer'
+import FooterWrapper from './components/FooterWrapper'
 
 export const metadata: Metadata = {
   title: '엄마 유형 테스트',
@@ -21,7 +21,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <link href="https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700&display=swap" rel="stylesheet" />
       </head>
       <body>{children}
-        <Footer />
+        <FooterWrapper />
       </body>
     </html>
   )
