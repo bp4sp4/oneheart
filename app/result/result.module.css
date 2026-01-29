@@ -1,9 +1,11 @@
 .container {
-  min-height: 100vh;
-  background:
-    radial-gradient(900px 400px at 50% -120px, rgba(0, 100, 255, 0.22), rgba(0, 100, 255, 0) 70%),
-    linear-gradient(180deg, #f8fbff 0%, #f3f4f6 55%, #f3f4f6 100%);
-  padding: 20px;
+  display: flex;
+  width: 360px;
+  padding: 77px 16px 82px 16px;
+  flex-direction: column;
+  align-items: center;
+  margin: 0 auto;
+  background: linear-gradient(180deg, #F2E6E6 0%, #A65661 100%);
 }
 
 .loading {

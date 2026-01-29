@@ -1,0 +1,689 @@
+/* 구분선 위아래 여백 */
+.dividerWrapper {
+  margin: 42px 0;
+  display: flex;
+  justify-content: center;
+}
+/* 생각 정리 포인트 카드 */
+.tipsCard {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 12px;
+  align-self: stretch;
+  padding: 20px 18px;
+  border-radius: 4px;
+  border: 1px solid var(--Grayscale-100, #F2F2F2);
+  background: var(--Grayscale-50, #FAFAFA);
+  margin-bottom: 20px;
+}
+
+.tipsCardTitle {
+  color: var(--Grayscale-500, #919191);
+  font-family: Pretendard;
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: 130%;
+  margin-bottom: 4px;
+}
+
+.tipsList {
+  margin: 0;
+  
+  list-style-type: none;
+}
+
+.tipsListItem {
+  color: var(--Grayscale-800, #1D1D1D);
+  text-align: justify;
+  font-family: Pretendard;
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: 140%;
+  margin-bottom: 4px;
+}
+/* 감정 태그 카드 레이아웃 */
+.emotionCard {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 12px;
+  align-self: stretch;
+  padding: 20px 18px;
+  border-radius: 4px;
+  border: 1px solid var(--Grayscale-100, #F2F2F2);
+  background: var(--Grayscale-50, #FAFAFA);
+  margin-bottom: 10px;
+}
+
+.emotionCardTitle {
+  color: var(--Grayscale-500, #919191);
+  font-family: Pretendard;
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: 130%;
+  margin-bottom: 4px;
+}
+
+.emotionTagsRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.emotionTag {
+  display: flex;
+  padding: 4px 8px;
+  justify-content: center;
+  align-items: center;
+  border-radius: 4px;
+  border: 1px solid #DAABAB;
+  background: #F2E6E6;
+  color: var(--Grayscale-800, #1D1D1D);
+  text-align: justify;
+  font-family: Pretendard;
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: 160%;
+}
+/* 자주 걱정하는 상황 TOP 5 리스트용 */
+.frequentSituationsList {
+  margin: 0;
+  padding-left: 18px;
+  list-style-type: none;
+}
+.conflictCard + .conflictCard {
+  margin-top: 8px;
+}
+.conflictCard {
+  display: flex;
+  padding: 20px 18px;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 12px;
+  align-self: stretch;
+  border-radius: 4px;
+  border: 1px solid var(--Grayscale-100, #F2F2F2);
+  background: var(--Grayscale-50, #FAFAFA);
+  margin-bottom: 10px;
+}
+
+.conflictCardTitle {
+  color: var(--Grayscale-500, #919191);
+  font-family: Pretendard;
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: 130%;
+  margin-bottom: 4px;
+}
+
+.conflictList {
+  margin: 0;
+  
+  
+}
+
+.conflictListItem {
+  color: var(--Grayscale-800, #1D1D1D);
+  text-align: justify;
+  font-family: Pretendard;
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: 160%;
+  margin-bottom: 4px;
+}
+.coreStrengthsDescription {
+  margin: 0 0 8px 0;
+  color: var(--Grayscale-700, #3D3D3D);
+  font-family: Pretendard;
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 140%;
+}
+
+.coreStrengthsList {
+  margin: 0;
+  
+  color: var(--Grayscale-400, #B0B0B0);
+  font-family: Pretendard;
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 140%;
+  
+}
+.emotionTagsContainer {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  margin-top: 12px;
+  margin-bottom: 0;
+}
+.strengthsHighlight {
+  color: var(--Grayscale-700, #3D3D3D);
+  font-family: Pretendard;
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 700;
+  line-height: 140%;
+}
+.page {
+  display: flex;
+  padding: 20px 16px;
+  flex-direction: column;
+  align-items: center;
+  align-self: stretch;
+  border-radius: 4px;
+  background: #FFF;
+  margin-bottom: 40px;
+}
+
+.pageLast {
+  display: flex;
+
+  flex-direction: column;
+  align-items: center;
+  
+  align-self: stretch;
+  border-radius: 4px;
+  
+}
+
+
+
+.badgeText {
+color: var(--Grayscale-900, #010101);
+text-align: center;
+font-family: Pretendard;
+font-size: 14px;
+font-style: normal;
+font-weight: 700;
+line-height: 130%; /* 18.2px */
+}
+
+.typeCode {
+  font-size: 32px;
+  font-weight: 700;
+  margin-bottom: 16px;
+}
+
+.imageArea {
+  width: 296px;
+  height: auto;
+  background: #f0f0f0;
+  border-radius: 8px;
+  margin-bottom: 10px;
+}
+
+.imagePlaceholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  color: #666;
+}
+
+.cardTitle {
+  font-size: 18px;
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+
+.cardSubtitle {
+  font-size: 14px;
+  color: #666;
+  line-height: 1.4;
+  white-space: pre-line;
+}
+
+.buttonGroup {
+  display: flex;
+  gap: 6px;
+  margin-bottom: 32px;
+  width: 100%;
+}
+
+.button {
+  display: flex;
+  padding: 12px 0;
+  justify-content: center;
+  align-items: center;
+  gap: 4px;
+  flex: 1 0 0;
+  align-self: stretch;
+  border-radius: 4px;
+  background: var(--black, #000);
+  color: var(--white, #FFF);
+  text-align: center;
+  font-family: Pretendard;
+  font-size: 16px;
+  font-style: normal;
+  font-weight: 600;
+  line-height: 130%;
+  border: none;
+  cursor: pointer;
+}
+
+.button::after {
+  content: '';
+  width: 24px;
+  height: 24px;
+  background-size: 24px 24px;
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
+.button:first-child::after {
+  background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M12 15.575C11.8667 15.575 11.7417 15.5543 11.625 15.513C11.5083 15.4717 11.4 15.4007 11.3 15.3L7.7 11.7C7.5 11.5 7.404 11.2667 7.412 11C7.42 10.7333 7.516 10.5 7.7 10.3C7.9 10.1 8.13767 9.996 8.413 9.988C8.68833 9.98 8.92567 10.0757 9.125 10.275L11 12.15V5C11 4.71667 11.096 4.47934 11.288 4.288C11.48 4.09667 11.7173 4.00067 12 4C12.2827 3.99934 12.5203 4.09534 12.713 4.288C12.9057 4.48067 13.0013 4.718 13 5V12.15L14.875 10.275C15.075 10.075 15.3127 9.979 15.588 9.987C15.8633 9.995 16.1007 10.0993 16.3 10.3C16.4833 10.5 16.5793 10.7333 16.588 11C16.5967 11.2667 16.5007 11.5 16.3 11.7L12.7 15.3C12.6 15.4 12.4917 15.471 12.375 15.513C12.2583 15.555 12.1333 15.5757 12 15.575ZM6 20C5.45 20 4.97933 19.8043 4.588 19.413C4.19667 19.0217 4.00067 18.5507 4 18V16C4 15.7167 4.096 15.4793 4.288 15.288C4.48 15.0967 4.71733 15.0007 5 15C5.28267 14.9993 5.52033 15.0953 5.713 15.288C5.90567 15.4807 6.00133 15.718 6 16V18H18V16C18 15.7167 18.096 15.4793 18.288 15.288C18.48 15.0967 18.7173 15.0007 19 15C19.2827 14.9993 19.5203 15.0953 19.713 15.288C19.9057 15.4807 20.0013 15.718 20 16V18C20 18.55 19.8043 19.021 19.413 19.413C19.0217 19.805 18.5507 20.0007 18 20H6Z" fill="white"/></svg>');
+}
+
+.button:last-child::after {
+  background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M18 16.08C17.24 16.08 16.56 16.38 16.04 16.85L8.91 12.7C8.96 12.47 9 12.24 9 12C9 11.76 8.96 11.53 8.91 11.3L15.96 7.19C16.5 7.69 17.21 8 18 8C19.66 8 21 6.66 21 5C21 3.34 19.66 2 18 2C16.34 2 15 3.34 15 5C15 5.24 15.04 5.47 15.09 5.7L8.04 9.81C7.5 9.31 6.79 9 6 9C4.34 9 3 10.34 3 12C3 13.66 4.34 15 6 15C6.79 15 7.5 14.69 8.04 14.19L15.16 18.35C15.11 18.56 15.08 18.78 15.08 19C15.08 20.61 16.39 21.92 18 21.92C19.61 21.92 20.92 20.61 20.92 19C20.92 17.39 19.61 16.08 18 16.08Z" fill="white"/></svg>');
+}
+
+.pageTitle {
+  margin-bottom: 20px;
+}
+
+.chartContainer {
+  width: 300px;
+  height: 300px;
+  margin: 0 auto;
+}
+
+.axisSection {
+  margin-top: 20px;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.axisCard {
+  display: flex;
+  padding: 20px 18px;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
+  align-self: stretch;
+  border-radius: 4px;
+  border: 1px solid #F2F2F2;
+  background: #FAFAFA;
+}
+
+.axisCardTitle {
+  color: #010101;
+  font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, sans-serif;
+  font-size: 16px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: 130%;
+  margin: 0;
+}
+
+.axisCardResult {
+  color: #A65661;
+  font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, sans-serif;
+  font-size: 16px;
+  font-style: normal;
+  font-weight: 700;
+  line-height: 130%;
+}
+
+.axisOptions {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  align-self: stretch;
+  flex-direction: row;
+}
+
+.axisOption {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  flex: 1;
+}
+
+.axisOptionLabel {
+  color: #919191;
+  font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, sans-serif;
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: 130%;
+  margin: 0;
+}
+
+.axisOptionActive {
+  color: #1D1D1D;
+  font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, sans-serif;
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: 140%;
+  margin: 0;
+}
+
+.axisOptionActiveTitle {
+  color: #A65661;
+  font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, sans-serif;
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: 130%;
+  margin: 0;
+}
+
+.axisTitle {
+  margin-bottom: 16px;
+}
+
+.axisGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-top: 16px;
+}
+
+.axisItem h4 {
+  margin-bottom: 8px;
+}
+
+.axisDescription {
+  font-size: 12px;
+}
+
+.badge {
+  display: inline-block;
+  padding: 10px 14px;
+  background: #F8EFEF;
+  border-radius: 20px;
+  font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--black);
+  margin-bottom: 10px;
+}
+
+.personalityText {
+  color: var(--Grayscale-700, #3D3D3D);
+  text-align: center;
+  font-family: Pretendard;
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 140%;
+  white-space: pre-line;
+  background: radial-gradient(54.77% 58.33% at 50% 50%, rgba(218, 171, 171, 0.50) 0%, rgba(218, 171, 171, 0.00) 87.65%);
+    padding: 18px 0;
+}
+
+.personalitySection{
+    padding: 32px 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    align-self: stretch;
+    border-radius: 4px;
+}
+
+.strengthsContainer {
+display: flex;
+
+flex-direction: column;
+align-items: center;
+
+align-self: stretch;
+}
+
+.strengthsBox {
+  display: flex;
+  padding: 20px 18px;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 12px;
+  align-self: stretch;
+  border-radius: 4px;
+  border: 1px solid var(--Grayscale-100, #F2F2F2);
+  background: var(--Grayscale-50, #FAFAFA);
+  margin: 0 0 10px 0;
+}
+
+.strengthsTitle {
+  margin: 0 0 4px 0;
+  color: var(--Grayscale-500, #919191);
+  font-family: Pretendard;
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: 130%;
+}
+
+.coreStrengthsSection {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  
+  align-self: stretch;
+  padding: 20px 18px;
+  border-radius: 4px;
+  border: 1px solid var(--Grayscale-100, #F2F2F2);
+  background: var(--Grayscale-50, #FAFAFA);
+  margin: 0 0 20px 0;
+}
+
+.coreStrengthsTitle {
+  margin: 0 0 4px 0;
+  color: var(--Grayscale-500, #919191);
+  font-family: Pretendard;
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: 130%;
+}
+
+.coreStrengthsDescription {
+  margin: 0 0 8px 0;
+  color: var(--Grayscale-800, #1D1D1D);
+  text-align: justify;
+  font-family: Pretendard;
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: 140%;
+}
+
+.strengthsDescription {
+  margin: 0;
+  color: var(--Grayscale-700, #3D3D3D);
+  font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, sans-serif;
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 140%;
+  
+}
+
+.strengthDetail {
+color: var(--Grayscale-800, #1D1D1D);
+text-align: justify;
+font-family: Pretendard;
+font-size: 14px;
+font-style: normal;
+font-weight: 500;
+line-height: 140%; /* 19.6px */
+}
+
+.conflictTitle {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.conflictSection {
+  
+  width: 100%;
+}
+
+.conflictSectionTitle {
+  margin-bottom: 12px;
+}
+
+.conflictItem {
+  margin: 8px 0;
+}
+
+.conflictFeeling {
+  margin: 8px 0;
+  color: #666;
+}
+
+.emotionTags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.emotionTag {
+  padding: 6px 12px;
+  border-radius: 4px;
+  font-size: 14px;
+}
+
+.directionTitle {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.tipsSection {
+  
+  width: 100%;
+}
+
+.tipItem {
+  margin: 12px 0;
+  line-height: 1.5;
+}
+
+/* 한줄 메세지 카드 */
+.messageBox {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  align-self: stretch;
+  padding: 20px 18px;
+  border-radius: 4px;
+  background: #F2E6E6;
+  
+}
+
+.messageTitle {
+  color: #A65661;
+  text-align: center;
+  font-family: Pretendard;
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: 130%;
+  margin-bottom: 0;
+}
+
+.messageText {
+  color: var(--Grayscale-800, #1D1D1D);
+  text-align: center;
+  font-family: "Gowun Batang";
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 140%;
+  white-space: pre-line;
+}
+
+.emailTitle {
+  margin-bottom: 20px;
+}
+
+.emailInputs {
+  
+  width: 100%;
+}
+
+.emailInput {
+  width: 100%;
+  padding: 12px;
+  margin-bottom: 8px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  box-sizing: border-box;
+}
+
+.emailInputConfirm {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  box-sizing: border-box;
+}
+
+.emailNotice {
+color: #FFF;
+text-align: center;
+font-family: Pretendard;
+font-size: 12px;
+font-style: normal;
+font-weight: 400;
+line-height: 140%; /* 16.8px */
+padding: 12px 0;
+}
+
+.emailButton {
+  width: 100%;
+  padding: 16px;
+  background: #000;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.strengthsBadge {
+  display: flex;
+  padding: 10px 14px;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  border-radius: 21px;
+  background: #F8EFEF;
+  margin-bottom: 16px;
+}
+
+.strengthsBadgeText {
+  color: var(--Grayscale-900, #010101);
+  text-align: center;
+  font-family: Pretendard;
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 700;
+  line-height: 130%;
+}
+
+.strengthsEmphasis {
+  color: var(--Grayscale-700, #3D3D3D);
+  font-family: Pretendard;
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 700;
+  line-height: 140%;
+}

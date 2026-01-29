@@ -1,9 +1,16 @@
 "use client"
 import { useSearchParams, useRouter } from 'next/navigation'
 import { useEffect, useState, useRef } from 'react'
-import Results from '../components/Results'
-import ShareControls from '../components/ShareControls'
+import dynamic from 'next/dynamic'
+
 import RadarChart, { RadarChartRef } from '../components/RadarChart'
+
+// 동적 import로 ResultDisplay 컴포넌트 로드
+const ResultDisplay = dynamic(() => import('../components/ResultDisplay'), {
+  loading: () => <p>컴포넌트를 로드하는 중...</p>
+})
+
+import { motherTypes } from '../../data/motherTypes'
 import styles from './result.module.css'
 import { getSupabase } from '../../lib/supabase'
 import { MotherResponse } from '../../types/mother'
@@ -46,13 +53,10 @@ export default function ResultPage() {
         const parsedCounts = countsParam ? JSON.parse(decodeURIComponent(countsParam)) : null
         const totalScore = parseInt(scoreParam)
         
+        // 토스 검수용: 모든 결과를 EOPC로 강제 설정
         setResult({
           score: totalScore,
-          mapping: {
-            code: codeParam,
-            label: labelParam,
-            summary: summaryParam || '',
-          },
+          mapping: motherTypes['EOPC'],
           axisSums: parsedAxisSums,
           counts: parsedCounts,
         })
@@ -185,52 +189,12 @@ export default function ResultPage() {
 
   return (
     <main className={styles.container}>
-      <div className={styles.header}>
-        <button 
-          className={styles.backButton}
-          onClick={() => router.back()}
-        >
-          ← 이전 페이지
-        </button>
-      </div>
-
-      <div className={styles.resultCard}>
-        <h1 className={styles.title}>엄마 유형 테스트 결과</h1>
-        
-        {result.counts && (
-          <div style={{ margin: '40px 0' }}>
-            
-            <RadarChart ref={chartRef} counts={result.counts} />
-          </div>
-        )}
-        
-        <Results 
-          mapping={result.mapping} 
-          axisSums={result.axisSums} 
-        />
-
-        <div className={styles.actions}>
-          <ShareControls 
-            mapping={result.mapping}
-            chartRef={chartRef}
-          />
-          <button 
-            onClick={handlePayment}
-            style={{ padding: '10px 20px', background: '#0064FF', color: 'white', border: 'none', borderRadius: 4, marginTop: 10 }}
-          >
-            결제하기 (1,000원)
-          </button>
-        </div>
-
-        <div className={styles.footer}>
-          <button 
-            className={styles.retakeButton}
-            onClick={() => router.push('/quiz')}
-          >
-            다시 테스트하기
-          </button>
-        </div>
-      </div>
+      {/* 토스 검수용: EOPC 유형만 표시 */}
+      <ResultDisplay 
+        motherType={motherTypes['EOPC']}
+        axisSums={result.axisSums}
+        counts={result.counts}
+      />
     </main>
   )
 }

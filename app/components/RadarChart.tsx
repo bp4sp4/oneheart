@@ -140,7 +140,7 @@ const RadarChart = forwardRef<RadarChartRef, RadarChartProps>(({ counts }, ref) 
   }
 
   return (
-    <div style={{ width: '296px', height: '296px', margin: '0 auto' }}>
+    <div style={{ width: '296px', height: '296px', margin: '0 auto', borderRadius: '4px', border : '1px solid #F2F2F2' }}>
       <Radar ref={chartRef} data={chartData} options={options} />
     </div>
   )
