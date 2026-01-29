@@ -31,18 +31,40 @@ interface RadarChartProps {
 }
 
 export interface RadarChartRef {
-  getChartImage: () => string | null
+  getChartImage: (hidePercentLabels?: boolean) => string | null
 }
 
 const RadarChart = forwardRef<RadarChartRef, RadarChartProps>(({ counts, hidePercentLabels = false }, ref) => {
   const chartRef = useRef<any>(null)
 
   useImperativeHandle(ref, () => ({
-    getChartImage: () => {
-      if (chartRef.current) {
-        return chartRef.current.toBase64Image()
+    getChartImage: (hide?: boolean) => {
+      if (!chartRef.current) return null
+      const chart: any = chartRef.current
+
+      let prevDisplay: any = null
+      try {
+        if (typeof hide !== 'undefined' && chart.options && chart.options.scales && chart.options.scales.r && chart.options.scales.r.ticks) {
+          prevDisplay = chart.options.scales.r.ticks.display
+          chart.options.scales.r.ticks.display = !hide ? prevDisplay : false
+          chart.update()
+        }
+      } catch (e) {
+        // ignore
       }
-      return null
+
+      const img = chart.toBase64Image()
+
+      try {
+        if (prevDisplay !== null && chart.options && chart.options.scales && chart.options.scales.r && chart.options.scales.r.ticks) {
+          chart.options.scales.r.ticks.display = prevDisplay
+          chart.update()
+        }
+      } catch (e) {
+        // ignore
+      }
+
+      return img
     }
   }))
 

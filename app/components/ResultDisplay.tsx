@@ -303,7 +303,6 @@ export default function ResultDisplay({ motherType, axisSums, counts }: ResultDi
           <RadarChart 
             ref={chartRef}
             counts={counts || []}
-            hidePercentLabels={true}
           />
         </div>
         <div className={styles.axisSection}>
