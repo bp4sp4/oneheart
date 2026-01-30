@@ -179,7 +179,6 @@ function PaymentSuccessContent() {
             </p>
             <div className={styles.recoveryCodeContainer}>
               <span className={styles.recoveryCodeText}>{testAccessToken}</span>
-              <button onClick={() => handleCopy(testAccessToken)} className={styles.copyButton}>복사</button>
               <button
                 onClick={() => handleCopy(`${window.location.origin}/quiz?token=${testAccessToken}`)}
                 className={styles.copyButton}
