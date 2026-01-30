@@ -299,32 +299,93 @@ export default function QuizPage() {
     ['C', 'T'],
   ]
 
+
   const calculateScore = async () => {
     if (hasAnyUnanswered()) {
       showToast('모든 문항에 응답해 주세요.')
       return
     }
 
-    // 로딩 시작
+    // 로딩 오버레이를 즉시 보여주기 위해 setTimeout 0으로 분리
     setIsCalculating(true)
     setCalculatingProgress(0)
 
-    // 프로그레스 바 애니메이션
-    const duration = 3000 // 3초
-    const interval = 50
-    const steps = duration / interval
-    let step = 0
+    // 다음 tick에 바로 애니메이션 시작 (오버레이가 렌더된 후)
+    setTimeout(() => {
+      const duration = 3000 // 3초
+      const interval = 50
+      const steps = duration / interval
+      let step = 0
 
-    const progressInterval = setInterval(() => {
-      step++
-      setCalculatingProgress((step / steps) * 100)
-      if (step >= steps) {
-        clearInterval(progressInterval)
-      }
-    }, interval)
+      const progressInterval = setInterval(() => {
+        step++
+        setCalculatingProgress((step / steps) * 100)
+        if (step >= steps) {
+          clearInterval(progressInterval)
+        }
+      }, interval)
 
-    // 3초 대기
-    await new Promise(resolve => setTimeout(resolve, duration))
+      // 3초 대기 후 점수 계산
+      setTimeout(async () => {
+        // ...existing score calculation logic below...
+
+        // 축별 카운트와 점수 합계 (각 축별로 25문항씩)
+        const axisCounts = [
+          { positive: 0, negative: 0, sum: 0 }, // A축: R vs E
+          { positive: 0, negative: 0, sum: 0 }, // B축: S vs L
+          { positive: 0, negative: 0, sum: 0 }, // C축: P vs O
+          { positive: 0, negative: 0, sum: 0 }, // D축: C vs T
+        ]
+        const axisIndex: Record<string, number> = { a: 0, b: 1, c: 2, d: 3 }
+
+        questions.forEach((q, idx) => {
+          const val = answers[idx] ?? 0
+          const isRev = !!q.reversed
+          const v = isRev ? -val : val
+          const a = (q.axis && axisIndex[q.axis.toLowerCase()]) ?? Math.floor(idx / 25)
+          const axis = typeof a === 'number' ? a : Math.floor(idx / 25)
+          axisCounts[axis].sum += v
+          if (v > 0) {
+            axisCounts[axis].positive++
+          } else if (v < 0) {
+            axisCounts[axis].negative++
+          }
+        })
+
+        const letters = axisCounts.map((counts, i) => {
+          if (counts.positive > counts.negative) {
+            return axisPairs[i][0]
+          } else if (counts.negative > counts.positive) {
+            return axisPairs[i][1]
+          } else {
+            return counts.sum >= 0 ? axisPairs[i][0] : axisPairs[i][1]
+          }
+        })
+        const code = letters.join('')
+        const mapping = motherTypes[code] ?? {
+          code,
+          label: code,
+          summary: '유형 설명을 준비 중입니다',
+          description: '',
+          traits: [],
+          strengths: [],
+          challenges: [],
+          tips: [],
+          color: '#A65661'
+        }
+        const sums = axisCounts.map(c => c.sum)
+        localStorage.setItem('quizOrder', JSON.stringify(shuffledQuestionsWithIndex.map(item => item.originalIndex)))
+        const params = new URLSearchParams({
+          score: '0',
+          code: mapping.code,
+          label: mapping.label,
+          summary: mapping.summary,
+          axis: JSON.stringify(sums),
+          counts: JSON.stringify(axisCounts),
+        })
+        router.push(`/result?${params.toString()}`)
+      }, 3000)
+    }, 0)
 
     // 축별 카운트와 점수 합계 (각 축별로 25문항씩)
     const axisCounts = [

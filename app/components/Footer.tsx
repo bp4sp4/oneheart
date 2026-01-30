@@ -15,7 +15,7 @@ export default function Footer() {
         
         <div className={styles.footerInfo}>
           <p className={styles.infoLine}>대표 양병호 | 사업자등록번호 818-11-01901</p>
-          <p className={styles.infoLine}>서울시 도봉구 창동 마들로13길 61 써도큐브 905호</p>
+          <p className={styles.infoLine}>서울특별시 도봉구 방학로 183, 4층 401호(방학동)</p>
           <div className={styles.footerLinks}>
             <Link href="/terms" className={styles.footerLink}>이용약관</Link>
             <span className={styles.divider}>|</span>
