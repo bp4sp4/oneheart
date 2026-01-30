@@ -10,6 +10,17 @@ interface ConfirmModalProps {
 }
 
 const ConfirmModal: React.FC<ConfirmModalProps> = ({ isOpen, message, onConfirm, onCancel }) => {
+  // If the app just completed payment and set the `justPaid` flag,
+  // we must never show the resume modal on first entrance.
+  if (typeof window !== 'undefined') {
+    try {
+      const justPaid = localStorage.getItem('justPaid')
+      if (justPaid) return null
+    } catch (e) {
+      // ignore
+    }
+  }
+
   if (!isOpen) {
     return null;
   }

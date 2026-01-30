@@ -71,8 +71,10 @@ export default function QuizPage() {
   // 진행상황 자동 저장 useEffect (answers, questionOrder, testAccessToken 선언 이후)
   useEffect(() => {
     if (!testAccessToken || !questionOrder || shuffledQuestionsWithIndex.length === 0) return;
-    // prevent saving empty answers on initial load
     if (Object.keys(answers).length === 0) return;
+
+    // answers를 항상 로컬 스토리지에 백업 (토큰이 바뀌어도 유지)
+    localStorage.setItem('answers', JSON.stringify(answers));
 
     fetch('/api/test/progress', {
       method: 'POST',
@@ -140,29 +142,66 @@ export default function QuizPage() {
     const tokenFromUrl = new URLSearchParams(window.location.search).get('token');
     const justPaidFlag = localStorage.getItem('justPaid');
 
+    // 1. 결제 직후 (최우선)
     if (justPaidFlag) {
-      // 결제 후 첫 입장: 이어하기 모달 띄우지 않고 플래그 제거
       localStorage.removeItem('justPaid');
+      setShowConfirmModal(false);
+      // (기존 결제 로직 유지...)
       if (tokenFromUrl) {
         setTestAccessToken(tokenFromUrl);
         localStorage.setItem('testAccessToken', tokenFromUrl);
-        initializeQuiz(tokenFromUrl, true);
+        fetch('/api/load-quiz-order', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ token: tokenFromUrl })
+        })
+        .then(res => res.json())
+        .then(data => {
+          if (data && data.question_order) {
+            setQuestionOrder(data.question_order);
+          } else {
+            startNewQuiz();
+          }
+        })
+        .catch(() => startNewQuiz());
       } else {
         startNewQuiz();
       }
-      return; // Added to prevent further processing in this useEffect
-    } else if (savedToken) {
-      setSessionToken(savedToken)
-      setShowConfirmModal(true)
-    } else if (tokenFromUrl) {
+    } 
+    // 2. 저장된 토큰이 있는 경우
+    else if (savedToken) {
+      let hasAnyAnswer = false;
+      try {
+        // 로컬 스토리지의 answers를 확인 (setAnswers와 연동되는 키값 확인 필요)
+        const savedAnswers = localStorage.getItem('answers'); 
+        if (savedAnswers) {
+          const parsed = JSON.parse(savedAnswers);
+          if (Object.keys(parsed).length > 0) hasAnyAnswer = true;
+        }
+      } catch (e) {}
+
+      if (hasAnyAnswer) {
+        // 응답이 있으면 모달을 띄워 물어봄
+        setSessionToken(savedToken);
+        setShowConfirmModal(true);
+      } else {
+        // 저장된 토큰은 있지만 응답한 문항이 없으면 그냥 새로 시작 (여기서 문항이 로드됨)
+        startNewQuiz();
+      }
+    } 
+    // 3. URL 토큰만 있는 경우
+    else if (tokenFromUrl) {
       setTestAccessToken(tokenFromUrl);
       localStorage.setItem('testAccessToken', tokenFromUrl);
       initializeQuiz(tokenFromUrl, true);
-    } else {
+    } 
+    // 4. 아무것도 없는 경우
+    else {
       startNewQuiz();
     }
-    setIsMounted(true)
-  }, [allQuestions, router]);
+    
+    setIsMounted(true);
+  }, [allQuestions]);
 
   const handleConfirmResume = () => {
     setShowConfirmModal(false);
@@ -360,26 +399,26 @@ export default function QuizPage() {
 
   // 클라이언트 마운트 전에는 로딩 표시
   if (!isMounted) {
-    return (
-      <main>
-        <ConfirmModal
-          isOpen={showConfirmModal}
-          message="이전 테스트를 이어서 진행하시겠습니까?"
-          onConfirm={handleConfirmResume}
-          onCancel={handleCancelResume}
-        />
-      </main>
-    )
+    return null;
   }
 
+  // justPaidFlag로 인해 모달이 뜨면 안 되는 경우 강제 비활성화
+  const justPaidFlag = typeof window !== 'undefined' ? localStorage.getItem('justPaid') : null;
+  // showConfirmModal은 useEffect에서 answers가 1개 이상일 때만 true로 설정됨
+  const shouldShowModal = showConfirmModal && !justPaidFlag;
+
+  // 항상 퀴즈 리스트는 렌더링, 모달은 조건부로만 렌더링
   return (
     <main>
+      {/* 이어하기 모달: 조건에 맞을 때만 */}
       <ConfirmModal
-        isOpen={showConfirmModal}
+        isOpen={shouldShowModal}
         message="이전 테스트를 이어서 진행하시겠습니까?"
         onConfirm={handleConfirmResume}
         onCancel={handleCancelResume}
       />
+
+      {/* 결과 계산 중 오버레이 */}
       {isCalculating && (
         <div style={{
           position: 'fixed',
@@ -430,10 +469,9 @@ export default function QuizPage() {
           </div>
         </div>
       )}
-      <Header />
+      {/* <Header /> */}
 
       <section className={styles.section}>
-
         {/* 프로그레스 바 */}
         <div className={styles.progressSection}>
           <div className={styles.headerCenter}>
@@ -465,8 +503,7 @@ export default function QuizPage() {
           </div>
         </div>
 
-        
-
+        {/* 퀴즈 리스트는 항상 렌더링 */}
         <QuestionList 
           key={questionListKey}
           questions={pageQuestions.map(q => q.question)} 
