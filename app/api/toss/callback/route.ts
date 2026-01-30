@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server'
 import fs from 'fs'
 import path from 'path'
-import { getSupabase } from '../../../../lib/supabase'
+import { supabase } from '../../../../lib/db' // Updated import
 
 const PAYMENTS_FILE = path.resolve(process.cwd(), 'data', 'payments.json')
 
@@ -30,7 +30,7 @@ export async function POST(req: Request) {
     console.log('[TOSS CALLBACK] body:', body);
     // Toss will POST result data here when autoExecute/resultCallback is used.
     // Persist the callback payload for later verification.
-    const sb = getSupabase()
+    const sb = supabase
 
     const key = body?.orderNo || body?.payToken || `callback_${Date.now()}`
     const status = body?.status || (body?.paidAmount ? 'PAY_COMPLETE' : 'UNKNOWN')

@@ -85,3 +85,93 @@
 .homeButton:hover {
     background: #1a6be6;
 }
+
+
+
+.errorCard {
+    border: 1px solid #dc3545;
+}
+
+.errorDetails {
+    background: #f8d7da;
+    color: #721c24;
+    padding: 15px;
+    border-radius: 8px;
+    text-align: left;
+    white-space: pre-wrap;
+    word-break: break-all;
+    font-size: 12px;
+    max-height: 200px;
+    overflow-y: auto;
+    margin-top: 20px;
+}
+
+/* Styles for the recovery code section (new) */
+.recoveryCodeSection {
+    margin-top: 32px;
+    padding: 20px;
+    background: #f8f9fa; /* Light background for the section */
+    border-radius: 12px; /* Slightly more rounded corners */
+    border: 1px solid #e9ecef;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05); /* Subtle shadow */
+}
+
+.recoveryCodePrompt {
+    font-size: 15px;
+    color: #495057;
+    margin: 0 0 18px 0; /* More spacing below prompt */
+    line-height: 1.6;
+    font-weight: 500; /* Slightly bolder */
+}
+
+.recoveryCodeContainer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: #e0e7eb; /* Slightly darker background for the code box */
+    padding: 14px 16px; /* More padding */
+    border-radius: 8px; /* Rounded corners for the box */
+    border: 1px solid #c9d2d8; /* Border for definition */
+    margin-bottom: 12px; /* Space before hint */
+}
+
+.recoveryCodeText {
+    font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, Courier, monospace; /* Monospace for code */
+    font-size: 15px;
+    color: #212529;
+    flex-grow: 1; /* Allow text to grow */
+    overflow-x: auto;
+    white-space: nowrap;
+    -ms-overflow-style: none; /* IE and Edge */
+    scrollbar-width: none; /* Firefox */
+    padding-right: 10px; /* Space between text and button */
+}
+.recoveryCodeText::-webkit-scrollbar {
+    display: none; /* Chrome, Safari, and Opera */
+}
+
+/* Ensure copy button is visible and does not shrink */
+.copyButton {
+    background: #6c757d;
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 600;
+    margin-left: 12px;
+    transition: background-color 0.2s;
+    flex-shrink: 0; /* Prevent button from shrinking */
+}
+
+.copyButton:hover {
+    background: #5a6268;
+}
+
+.recoveryCodeHint {
+    font-size: 13px;
+    color: #868e96;
+    margin: 0;
+    line-height: 1.4;
+}

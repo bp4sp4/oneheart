@@ -1,0 +1,79 @@
+/* app/components/ConfirmModal.module.css */
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10000;
+  backdrop-filter: blur(4px);
+}
+
+.modal {
+  background: #fff;
+  padding: 32px;
+  border-radius: 16px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+  width: 90%;
+  max-width: 380px;
+  text-align: center;
+  animation: fadeIn 0.3s ease-out;
+  border: 1px solid #f0f0f0;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.message {
+  font-size: 18px;
+  font-weight: 600;
+  color: #333;
+  margin: 0 0 24px;
+  line-height: 1.5;
+}
+
+.buttonGroup {
+  display: flex;
+  gap: 12px;
+}
+
+.button {
+  flex: 1;
+  font-size: 16px;
+  padding: 14px 20px;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  font-weight: 600;
+  transition: all 0.2s ease;
+}
+
+.cancelButton {
+  background-color: #f0f2f5;
+  color: #555;
+}
+
+.cancelButton:hover {
+  background-color: #e4e6e9;
+}
+
+.confirmButton {
+  background-color: #A65661;
+  color: white;
+}
+
+.confirmButton:hover {
+  background-color: #943e4a;
+}

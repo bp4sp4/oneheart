@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server'
 import fs from 'fs'
 import path from 'path'
-import { getSupabase } from '../../../../lib/supabase'
+import { supabase } from '../../../../lib/db' // Updated import
 
 const PAYMENTS_FILE = path.resolve(process.cwd(), 'data', 'payments.json')
 
@@ -24,7 +24,7 @@ export async function POST(req: Request) {
     // check by orderNo in persisted records
     if (orderNo && payments[orderNo]) {
       const rec = payments[orderNo]
-      const sb = getSupabase()
+      const sb = supabase
       // if created but not completed, try to verify with Toss if possible
       if (rec.status === 'CREATED' && rec.payToken && process.env.TOSS_API_KEY) {
         try {
@@ -54,7 +54,7 @@ export async function POST(req: Request) {
         }
       }
       // fallback: query supabase by pay_token
-      const sb = getSupabase()
+      const sb = supabase
       if (sb) {
         const { data } = await sb.from('payments').select('*').eq('pay_token', payToken).limit(1)
         if (data && data.length > 0) return NextResponse.json({ ok: true, found: true, record: data[0] })

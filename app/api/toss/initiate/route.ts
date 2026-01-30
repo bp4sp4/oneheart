@@ -1,27 +1,6 @@
 import { NextResponse } from 'next/server'
-import fs from 'fs'
-import path from 'path'
-import { getSupabase } from '../../../../lib/supabase'
-
-const PAYMENTS_FILE = path.resolve(process.cwd(), 'data', 'payments.json')
-
-function readPayments() {
-  try {
-    const raw = fs.readFileSync(PAYMENTS_FILE, 'utf-8')
-    return JSON.parse(raw || '{}')
-  } catch (e) {
-    return {}
-  }
-}
-
-function writePayments(obj: any) {
-  try {
-    fs.mkdirSync(path.dirname(PAYMENTS_FILE), { recursive: true })
-    fs.writeFileSync(PAYMENTS_FILE, JSON.stringify(obj, null, 2), 'utf-8')
-  } catch (e) {
-    // ignore
-  }
-}
+import { supabase } from '../../../../lib/db' // Use the unified Supabase client
+import crypto from 'crypto';
 
 export async function POST(req: Request) {
   try {
@@ -30,107 +9,82 @@ export async function POST(req: Request) {
 
     const apiKey = process.env.TOSS_API_KEY
     if (!apiKey) {
-      // dev fallback or env not configured
-      if (process.env.TOSS_CHECKOUT_URL) {
-        return NextResponse.json({ url: process.env.TOSS_CHECKOUT_URL })
-      }
-      return NextResponse.json({ url: '/quiz' })
+      return NextResponse.json({ url: '/quiz', error: 'Toss API key not configured' })
     }
 
-    const orderNo = `oneheart-${Date.now()}`
-    // Basic payload and validation
+    const orderId = `oneheart-${Date.now()}`
+    const tempToken = crypto.randomUUID(); // For linking session before payment is confirmed
+
     const origin = process.env.NEXT_PUBLIC_ORIGIN || 'http://localhost:3000'
 
     function isValidUrl(s: string) {
       try {
-        // eslint-disable-next-line no-new
-        new URL(s)
+        new URL(s);
         return true
       } catch (e) {
         return false
       }
     }
 
-    const resultCallback = `${origin}/api/toss/callback`
-    const retUrl = `${origin}/quiz?pay=success&orderNo=${orderNo}`
-    const retCancelUrl = `${origin}/pay?canceled=1&orderNo=${orderNo}`
+    const successUrl = `${origin}/payment/success` // This page will handle the confirmation
+    const failUrl = `${origin}/payment/fail`
 
     if (!Number.isInteger(Number(amount)) || Number(amount) <= 0) {
-      return NextResponse.json({ error: 'invalid_amount', message: 'amount must be a positive integer', payload: { amount } }, { status: 400 })
+      return NextResponse.json({ error: 'invalid_amount', message: 'amount must be a positive integer' }, { status: 400 })
     }
 
-    if (![resultCallback, retUrl, retCancelUrl].every(isValidUrl)) {
-      return NextResponse.json({ error: 'invalid_urls', message: 'resultCallback/retUrl/retCancelUrl must be valid absolute URLs', payload: { resultCallback, retUrl, retCancelUrl } }, { status: 400 })
+    if (!isValidUrl(successUrl) || !isValidUrl(failUrl)) {
+      return NextResponse.json({ error: 'invalid_urls', message: 'Success/Fail URLs are not valid absolute URLs' }, { status: 400 })
     }
 
-    const payload = {
-      orderNo,
+    // First, create the pending order record in our database.
+    const { error: insertError } = await supabase
+      .from('orders')
+      .insert({
+        order_id: orderId,
+        amount: Number(amount),
+        temp_token: tempToken,
+        status: 'PENDING',
+      });
+
+    if (insertError) {
+      console.error('Supabase insert order failed:', insertError);
+      return NextResponse.json({ error: 'database_error', message: 'Failed to create an order record.' }, { status: 500 });
+    }
+
+    // Then, create the payment with Toss
+    const tossPayload = {
+      method: '카드', // Example payment method
+      orderId: orderId,
       amount: Number(amount),
-      amountTaxFree: 0,
-      productDesc: '엄마 유형 테스트',
-      autoExecute: true,
-      resultCallback,
-      retUrl,
-      retCancelUrl,
+      orderName: '엄마 유형 테스트',
+      successUrl: successUrl,
+      failUrl: failUrl,
     }
 
-    // Toss API expects Authorization header with the secret key (Basic base64(secretKey:))
     const basic = 'Basic ' + Buffer.from(apiKey + ':').toString('base64')
 
-    let resp
-    let json
-    try {
-      resp = await fetch('https://pay.toss.im/api/v2/payments', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', Authorization: basic },
-        body: JSON.stringify(payload),
-      })
+    const tossResponse = await fetch('https://api.tosspayments.com/v1/payments', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', Authorization: basic },
+      body: JSON.stringify(tossPayload),
+    })
 
-      // try to parse JSON safely
-      const text = await resp.text()
-      try {
-        json = text ? JSON.parse(text) : null
-      } catch (e) {
-        json = { raw: text }
-      }
-    } catch (fetchErr) {
-      console.error('Toss create fetch error:', fetchErr)
-      return NextResponse.json({ error: 'toss_fetch_failed', message: String(fetchErr) }, { status: 500 })
+    const tossJson = await tossResponse.json();
+
+    if (!tossResponse.ok) {
+      console.error('Toss create failed; sent payload:', JSON.stringify(tossPayload))
+      console.error('Toss response:', tossJson)
+      // Attempt to clean up the pending order we created
+      await supabase.from('orders').delete().eq('order_id', orderId);
+      return NextResponse.json({ error: 'toss_create_failed', details: tossJson }, { status: tossResponse.status || 500 })
     }
 
-    if (!resp.ok || json?.code !== 0) {
-      console.error('Toss create failed; sent payload:', JSON.stringify(payload))
-      console.error('Toss response status:', resp.status, 'body:', json)
-      // include Toss response for easier debugging
-      return NextResponse.json({ error: 'toss_create_failed', toss: json, sentPayload: payload }, { status: resp.status || 500 })
-    }
+    // Return the checkout URL from Toss to the client
+    return NextResponse.json({ checkoutUrl: tossJson.checkout.url, orderId: orderId });
 
-    // persist the created payment record (Supabase if configured, else file)
-    try {
-      const sb = getSupabase()
-      if (sb) {
-        // upsert into payments table
-        await (sb.from('payments') as any).upsert({ order_no: orderNo, pay_token: json.payToken, amount, status: 'CREATED', checkout_page: json.checkoutPage, raw: json, created_at: new Date().toISOString() }, { onConflict: 'order_no' })
-      } else {
-        const payments = readPayments()
-        payments[orderNo] = {
-          createdAt: new Date().toISOString(),
-          orderNo,
-          amount,
-          status: 'CREATED',
-          payToken: json.payToken,
-          checkoutPage: json.checkoutPage,
-          raw: json,
-        }
-        writePayments(payments)
-      }
-    } catch (e) {
-      // ignore persistence errors
-    }
-
-    // return the checkout page URL from Toss
-    return NextResponse.json({ url: json.checkoutPage, payToken: json.payToken, orderNo })
   } catch (err: any) {
+    console.error('Initiate payment error:', err);
     return NextResponse.json({ error: err?.message || 'failed' }, { status: 500 })
   }
 }

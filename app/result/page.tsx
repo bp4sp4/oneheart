@@ -12,8 +12,17 @@ const ResultDisplay = dynamic(() => import('../components/ResultDisplay'), {
 
 import { motherTypes } from '../../data/motherTypes'
 import styles from './result.module.css'
-import { getSupabase } from '../../lib/supabase'
-import { MotherResponse } from '../../types/mother'
+
+// supabase import 제거, MotherResponse 타입은 아래에서 직접 정의
+
+type MotherResponse = {
+  total: number
+  typeCode: string
+  typeName: string
+  summary: string
+  scores: Record<string, number>
+  quizOrder?: number[]
+}
 
 export default function ResultPage() {
   const searchParams = useSearchParams()
@@ -121,41 +130,41 @@ export default function ResultPage() {
     setLoading(true)
     setError(null)
     try {
-      const sb = getSupabase()
-      if (sb) {
-        const { data, error } = await sb.from('mothers').select('*').eq('recovery_code', recoveryCode.toUpperCase()).single()
-        if (error || !data) {
-          setError('유효하지 않은 복원 코드입니다.')
-          return
-        }
-        const mother: MotherResponse = data
-        // 결과 설정
-        const axisSums: number[] = []
-        const axisPairs = [
-          ['R', 'E'],
-          ['S', 'L'],
-          ['P', 'O'],
-          ['C', 'T']
-        ]
-        axisPairs.forEach(([pos, neg]) => {
-          axisSums.push(mother.scores[pos] || -(mother.scores[neg] || 0))
-        })
-        // 퀴즈 순서 복원
-        if (mother.quizOrder) {
-          localStorage.setItem('quizOrder', JSON.stringify(mother.quizOrder))
-        }
-        setResult({
-          score: mother.total,
-          mapping: {
-            code: mother.typeCode,
-            label: mother.typeName,
-            summary: mother.summary,
-          },
-          axisSums,
-        })
-      } else {
-        setError('DB 연결 실패.')
+      const res = await fetch('/api/recover', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ recoveryCode })
+      })
+      const data = await res.json()
+      if (!res.ok || !data.success || !data.mother) {
+        setError(data.message || '유효하지 않은 복원 코드입니다.')
+        return
       }
+      const mother: MotherResponse = data.mother
+      // 결과 설정
+      const axisSums: number[] = []
+      const axisPairs = [
+        ['R', 'E'],
+        ['S', 'L'],
+        ['P', 'O'],
+        ['C', 'T']
+      ]
+      axisPairs.forEach(([pos, neg]) => {
+        axisSums.push(mother.scores[pos] || -(mother.scores[neg] || 0))
+      })
+      // 퀴즈 순서 복원
+      if (mother.quizOrder) {
+        localStorage.setItem('quizOrder', JSON.stringify(mother.quizOrder))
+      }
+      setResult({
+        score: mother.total,
+        mapping: {
+          code: mother.typeCode,
+          label: mother.typeName,
+          summary: mother.summary,
+        },
+        axisSums,
+      })
     } catch (err) {
       setError('조회 중 오류 발생.')
     } finally {

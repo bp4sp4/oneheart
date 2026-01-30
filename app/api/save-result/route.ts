@@ -1,7 +1,7 @@
 export const runtime = 'nodejs'
 
 import { NextResponse } from 'next/server'
-import { getSupabase } from '../../../lib/supabase'
+import { supabase } from '../../../lib/db'
 import nodeCrypto from 'crypto'
 
 export async function POST(req: Request) {
@@ -12,8 +12,8 @@ export async function POST(req: Request) {
 
     if (!result) return NextResponse.json({ error: 'missing result' }, { status: 400 })
 
-    const sb = getSupabase()
-    console.log('/api/save-result getSupabase type:', typeof getSupabase, 'sb:', typeof sb)
+    const sb = supabase
+    console.log('/api/save-result supabase type:', typeof supabase, 'sb:', typeof sb)
     if (!sb) {
       console.error('Supabase client not available')
       return NextResponse.json({ error: 'Supabase not configured' }, { status: 500 })

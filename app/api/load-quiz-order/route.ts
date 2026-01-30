@@ -1,33 +1,31 @@
-export const runtime = 'nodejs'
-
 import { NextResponse } from 'next/server'
-import { getSupabase } from '../../../lib/supabase'
+import { supabase } from '../../../lib/db' // Updated import
 
 export async function POST(req: Request) {
   try {
-    const body = await req.json()
-    const { recoveryCode } = body
-
-    if (!recoveryCode) return NextResponse.json({ error: 'missing recoveryCode' }, { status: 400 })
-
-    const sb = getSupabase()
-    if (!sb) {
-      return NextResponse.json({ error: 'Supabase not configured' }, { status: 500 })
+    const { token } = await req.json()
+    if (!token) {
+      return NextResponse.json({ error: 'token required' }, { status: 400 })
     }
 
-    const { data, error } = await sb
-      .from('mother')
-      .select('quizOrder')
-      .eq('recoveryCode', recoveryCode.toUpperCase())
+    const { data, error } = await supabase
+      .from('test_progress')
+      .select('question_order')
+      .eq('test_access_token', token)
       .single()
 
-    if (error || !data) {
-      return NextResponse.json({ error: 'Recovery code not found' }, { status: 404 })
+    if (error) {
+      console.error('Supabase fetch question order error:', error)
+      return NextResponse.json({ error: 'failed to fetch question order' }, { status: 500 })
     }
 
-    return NextResponse.json({ quizOrder: (data as any).quizOrder })
-  } catch (e) {
-    console.error(e)
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
+    if (!data) {
+      return NextResponse.json({ error: 'question order not found' }, { status: 404 })
+    }
+
+    return NextResponse.json({ question_order: data.question_order })
+  } catch (err: any) {
+    console.error('API /api/load-quiz-order POST Error:', err)
+    return NextResponse.json({ error: err?.message || 'failed' }, { status: 500 })
   }
 }

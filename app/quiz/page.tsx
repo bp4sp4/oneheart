@@ -7,15 +7,22 @@ import Results from '../components/Results'
 import ShareControls from '../components/ShareControls'
 import { motherTypes } from '../../data/motherTypes'
 import styles from './quiz.module.css'
+import ConfirmModal from '../components/ConfirmModal';
 import { width } from 'pdfkit/js/page'
 
 export default function QuizPage() {
+  // ...existing code...
+  // (모든 state 선언 이후에 위치해야 함)
+  // ...state declarations...
+
   const search = useSearchParams()
   const router = useRouter()
   const pay = search?.get('pay')
   const orderNoQuery = search?.get('orderNo')
 
-  
+
+
+
 
   useEffect(() => {
     // if redirected from Toss (pay=success), verify payment status before allowing the quiz
@@ -53,23 +60,131 @@ export default function QuizPage() {
     }
   }, [])
 
-  // 랜덤 순서로 문항 섞기 (원본 인덱스 유지) - 클라이언트에서만 실행
+  // 문제 순서 복구/생성 관련 상태
   const [shuffledQuestionsWithIndex, setShuffledQuestionsWithIndex] = useState<Array<{ question: any; originalIndex: number }>>([])
   const [isMounted, setIsMounted] = useState(false)
-  
-  useEffect(() => {
-    if (allQuestions.length === 0) {
-      setIsMounted(true)
-      return
-    }
+  const [questionOrder, setQuestionOrder] = useState<number[] | null>(null)
+  const [testAccessToken, setTestAccessToken] = useState<string | null>(null)
+  const [showConfirmModal, setShowConfirmModal] = useState(false)
+  const [sessionToken, setSessionToken] = useState<string | null>(null)
 
-    // 클라이언트에서만 랜덤화 실행 (임시 세션 전용)
+  // 진행상황 자동 저장 useEffect (answers, questionOrder, testAccessToken 선언 이후)
+  useEffect(() => {
+    if (!testAccessToken || !questionOrder || shuffledQuestionsWithIndex.length === 0) return;
+    // prevent saving empty answers on initial load
+    if (Object.keys(answers).length === 0) return;
+
+    fetch('/api/test/progress', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        test_access_token: testAccessToken,
+        last_question_index: 0, // This can be enhanced to save the current page
+        answers,
+        question_order: questionOrder
+      })
+    });
+  }, [answers, questionOrder, testAccessToken, shuffledQuestionsWithIndex]);
+
+  const startNewQuiz = () => {
+    // 새로운 토큰 생성
+    const newToken = crypto.randomUUID();
+    setTestAccessToken(newToken);
+    localStorage.setItem('testAccessToken', newToken);
+
+    // 새로운 문제 순서 생성
     const base = allQuestions.map((q, idx) => ({ question: q, originalIndex: idx }))
     const shuffled = base.sort(() => Math.random() - 0.5)
-    console.log('Created new shuffle for session', shuffled)
-    setShuffledQuestionsWithIndex(shuffled)
+    const newOrder = shuffled.map(item => item.originalIndex)
+    setQuestionOrder(newOrder);
+
+    // URL에 새 토큰 반영 (페이지 리프레시나 새 탭에서 복구 가능하도록)
+    router.replace(`/quiz?token=${newToken}`, undefined);
+    setAnswers({});
+    setCurrentPage(0);
+    setQuestionListKey(prev => prev + 1); // QuestionList를 강제로 리셋
+    showToast('새로운 테스트를 시작합니다.');
+  }
+
+  const initializeQuiz = (token: string | null, resume = false) => {
+    if (resume && token) {
+      // 복구 시도
+      fetch(`/api/test/progress?token=${token}`)
+        .then(res => res.json())
+        .then(data => {
+          if (data && data.question_order) {
+            setQuestionOrder(data.question_order)
+            if (data.answers) setAnswers(data.answers)
+            showToast('이전 진행상황을 복구했습니다.')
+          } else {
+            // 복구 실패 시 새로 생성
+            startNewQuiz();
+          }
+        })
+        .catch(() => {
+          showToast('진행상황 복구에 실패했습니다. 새로운 테스트를 시작합니다.')
+          startNewQuiz();
+        })
+    } else {
+      // 새 퀴즈 시작
+      startNewQuiz();
+    }
+  };
+
+
+  // 세션 관리, 문제 순서 복구/생성
+  useEffect(() => {
+    if (allQuestions.length === 0) return;
+
+    const savedToken = localStorage.getItem('testAccessToken');
+    const tokenFromUrl = new URLSearchParams(window.location.search).get('token');
+    const justPaidFlag = localStorage.getItem('justPaid');
+
+    if (justPaidFlag) {
+      // 결제 후 첫 입장: 이어하기 모달 띄우지 않고 플래그 제거
+      localStorage.removeItem('justPaid');
+      if (tokenFromUrl) {
+        setTestAccessToken(tokenFromUrl);
+        localStorage.setItem('testAccessToken', tokenFromUrl);
+        initializeQuiz(tokenFromUrl, true);
+      } else {
+        startNewQuiz();
+      }
+      return; // Added to prevent further processing in this useEffect
+    } else if (savedToken) {
+      setSessionToken(savedToken)
+      setShowConfirmModal(true)
+    } else if (tokenFromUrl) {
+      setTestAccessToken(tokenFromUrl);
+      localStorage.setItem('testAccessToken', tokenFromUrl);
+      initializeQuiz(tokenFromUrl, true);
+    } else {
+      startNewQuiz();
+    }
     setIsMounted(true)
-  }, [allQuestions])
+  }, [allQuestions, router]);
+
+  const handleConfirmResume = () => {
+    setShowConfirmModal(false);
+    if(sessionToken) {
+      setTestAccessToken(sessionToken);
+      router.replace(`/quiz?token=${sessionToken}`, undefined);
+      initializeQuiz(sessionToken, true);
+    }
+  }
+
+  const handleCancelResume = () => {
+    setShowConfirmModal(false);
+    localStorage.removeItem('testAccessToken');
+    startNewQuiz();
+  }
+
+  // questionOrder가 정해지면 실제 문제 배열 생성
+  useEffect(() => {
+    if (!questionOrder || allQuestions.length === 0) return
+    const arr = questionOrder.map(idx => ({ question: allQuestions[idx], originalIndex: idx }))
+    setShuffledQuestionsWithIndex(arr)
+  }, [questionOrder, allQuestions])
 
   const [currentPage, setCurrentPage] = useState(0)
   const pageSize = 10
@@ -245,11 +360,26 @@ export default function QuizPage() {
 
   // 클라이언트 마운트 전에는 로딩 표시
   if (!isMounted) {
-    return null
+    return (
+      <main>
+        <ConfirmModal
+          isOpen={showConfirmModal}
+          message="이전 테스트를 이어서 진행하시겠습니까?"
+          onConfirm={handleConfirmResume}
+          onCancel={handleCancelResume}
+        />
+      </main>
+    )
   }
 
   return (
     <main>
+      <ConfirmModal
+        isOpen={showConfirmModal}
+        message="이전 테스트를 이어서 진행하시겠습니까?"
+        onConfirm={handleConfirmResume}
+        onCancel={handleCancelResume}
+      />
       {isCalculating && (
         <div style={{
           position: 'fixed',
