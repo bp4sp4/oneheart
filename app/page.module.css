@@ -87,7 +87,7 @@
 
 .aboutContent {
   display: flex;
-  width: 360px;
+  
   flex-direction: column;
   align-items: center;
   

@@ -31,7 +31,7 @@ export default function PaymentPage() {
           <PaymentContent />
         </Suspense>
       </div>
-      <Footer />
+      
     </div>
   );
 }
