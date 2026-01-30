@@ -382,7 +382,8 @@ export default function QuizPage() {
           axis: JSON.stringify(sums),
           counts: JSON.stringify(axisCounts),
         });
-        router.push(`/result?${params.toString()}`);
+        await router.push(`/result?${params.toString()}`);
+        setIsCalculating(false); // 반드시 라우팅 후에 오버레이 해제
       }, duration);
     }, 0);
 
