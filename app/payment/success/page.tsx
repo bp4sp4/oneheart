@@ -5,14 +5,32 @@ import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import styles from "./success.module.css";
 
-// 로딩 컴포넌트
-function SuccessLoading() {
+// 로딩 오버레이 (gif + 프로그레스바)
+function SuccessLoadingOverlay({ visible }: { visible: boolean }) {
+  const [progress, setProgress] = useState(0);
+  useEffect(() => {
+    if (!visible) return;
+    setProgress(0);
+    let step = 0;
+    const steps = 60; // 3초 (60*50ms)
+    const interval = setInterval(() => {
+      step++;
+      setProgress((step / steps) * 100);
+      if (step >= steps) clearInterval(interval);
+    }, 50);
+    return () => clearInterval(interval);
+  }, [visible]);
+  if (!visible) return null;
   return (
-    <div className={styles.container}>
-      <div className={styles.successCard}>
-        <div className={styles.successIcon}>...</div>
-        <h1 className={styles.successTitle}>결제 확인 중...</h1>
-        <p className={styles.successMessage}>결제 정보를 서버와 확인하고 있습니다. 잠시만 기다려주세요.</p>
+    <div className={styles.loadingOverlay}>
+      <div className={styles.loadingCard}>
+        <img src="/images/loading.gif" alt="로딩중" className={styles.loadingGif} />
+        <div className={styles.loadingText}>결제 정보를 확인 중입니다...</div>
+        <div className={styles.loadingProgressBarWrap}>
+          <div className={styles.loadingProgressBarBg}>
+            <div className={styles.loadingProgressBarFill} style={{ width: `${progress}%` }} />
+          </div>
+        </div>
       </div>
     </div>
   );
@@ -35,6 +53,7 @@ function SuccessPending() {
 function PaymentSuccessContent() {
   const searchParams = useSearchParams();
   const [status, setStatus] = useState<'loading' | 'pending' | 'success' | 'error'>('loading');
+  const [showLoading, setShowLoading] = useState(true);
   const [errorDetails, setErrorDetails] = useState<any>(null);
   const [testAccessToken, setTestAccessToken] = useState<string | null>(null);
   const confirmingRef = useRef(false);
@@ -43,17 +62,20 @@ function PaymentSuccessContent() {
   const orderId = searchParams?.get("orderId");
   const amount = searchParams?.get("amount");
 
+  // 최소 3초간 로딩 오버레이 보장
   useEffect(() => {
     let cancelled = false;
+    setShowLoading(true);
+    const minTime = 3000;
+    const start = Date.now();
     const confirmPayment = async () => {
-      console.log("Attempting to confirm payment..."); // Add log
-      if (confirmingRef.current) return; // 중복 호출 방지
+      if (confirmingRef.current) return;
       confirmingRef.current = true;
       if (!paymentKey || !orderId || !amount) {
         setStatus('error');
         setErrorDetails({ message: 'URL에서 결제 정보를 찾을 수 없습니다.' });
-        console.error("Missing payment info in URL"); // Add log
         confirmingRef.current = false;
+        setShowLoading(false);
         return;
       }
       const token = localStorage.getItem("testAccessToken");
@@ -70,16 +92,10 @@ function PaymentSuccessContent() {
           }),
         });
         const json = await res.json();
-        console.log('결제 confirm 응답:', json); // 디버깅용 로그 추가
-        if (!res.ok) {
-          throw json;
-        }
+        if (!res.ok) throw json;
         if (json.success === true || json.status === "DONE") {
-          console.log('Payment confirmation successful, calling setStatus("success")');
           setStatus('success');
         } else {
-          // Payment is not DONE yet, set to pending and start polling
-          console.log('Payment not yet DONE, calling setStatus("pending")');
           setStatus('pending');
         }
       } catch (err) {
@@ -89,6 +105,13 @@ function PaymentSuccessContent() {
         }
       } finally {
         confirmingRef.current = false;
+        // 최소 3초 보장
+        const elapsed = Date.now() - start;
+        if (elapsed < minTime) {
+          setTimeout(() => setShowLoading(false), minTime - elapsed);
+        } else {
+          setShowLoading(false);
+        }
       }
     };
     confirmPayment();
@@ -136,8 +159,10 @@ function PaymentSuccessContent() {
     });
   };
   
-  if (status === 'loading') {
-    return <SuccessLoading />;
+  // 로딩 오버레이 항상 위에 렌더링
+  // 모바일에서 빠르게 사라지지 않도록 showLoading이 true면 오버레이만 보여줌
+  if (showLoading) {
+    return <SuccessLoadingOverlay visible={showLoading} />;
   }
 
   if (status === 'pending') {
@@ -229,7 +254,7 @@ function PaymentSuccessContent() {
 // 메인 페이지 컴포넌트
 export default function PaymentSuccessPage() {
   return (
-    <Suspense fallback={<SuccessLoading />}>
+    <Suspense fallback={<div />}>
       <PaymentSuccessContent />
     </Suspense>
   );
