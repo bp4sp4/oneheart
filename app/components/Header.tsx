@@ -71,12 +71,7 @@ export default function Header() {
       {shouldRender && (
         <div className={styles.menuOverlay}>
           <div className={panelOpen ? `${styles.menuPanel} ${styles.open}` : styles.menuPanel} ref={menuRef}>
-            <button className={styles.menuClose} aria-label="닫기" onClick={() => setMenuOpen(false)}>
-              <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M8 8L24 24" stroke="#fff" strokeWidth="2.5" strokeLinecap="round"/>
-                <path d="M24 8L8 24" stroke="#fff" strokeWidth="2.5" strokeLinecap="round"/>
-              </svg>
-            </button>
+    
             <nav className={styles.menuNav}>
               <Link href="/about" className={styles.menuItem} onClick={() => setMenuOpen(false)}>
                 엄마 유형 테스트 더 알아보기
