@@ -312,56 +312,55 @@ export default function QuizPage() {
 
     // 다음 tick에 바로 애니메이션 시작 (오버레이가 렌더된 후)
     setTimeout(() => {
-      const duration = 3000 // 3초
-      const interval = 50
-      const steps = duration / interval
-      let step = 0
+      // 3.5초 고정 (모바일에서도 확실히 보이도록)
+      const duration = 3500; // 3.5초
+      const interval = 50;
+      const steps = duration / interval;
+      let step = 0;
 
       const progressInterval = setInterval(() => {
-        step++
-        setCalculatingProgress((step / steps) * 100)
+        step++;
+        setCalculatingProgress((step / steps) * 100);
         if (step >= steps) {
-          clearInterval(progressInterval)
+          clearInterval(progressInterval);
         }
-      }, interval)
+      }, interval);
 
-      // 3초 대기 후 점수 계산
+      // duration 대기 후 점수 계산
       setTimeout(async () => {
         // ...existing score calculation logic below...
-
-        // 축별 카운트와 점수 합계 (각 축별로 25문항씩)
         const axisCounts = [
           { positive: 0, negative: 0, sum: 0 }, // A축: R vs E
           { positive: 0, negative: 0, sum: 0 }, // B축: S vs L
           { positive: 0, negative: 0, sum: 0 }, // C축: P vs O
           { positive: 0, negative: 0, sum: 0 }, // D축: C vs T
-        ]
-        const axisIndex: Record<string, number> = { a: 0, b: 1, c: 2, d: 3 }
+        ];
+        const axisIndex: Record<string, number> = { a: 0, b: 1, c: 2, d: 3 };
 
         questions.forEach((q, idx) => {
-          const val = answers[idx] ?? 0
-          const isRev = !!q.reversed
-          const v = isRev ? -val : val
-          const a = (q.axis && axisIndex[q.axis.toLowerCase()]) ?? Math.floor(idx / 25)
-          const axis = typeof a === 'number' ? a : Math.floor(idx / 25)
-          axisCounts[axis].sum += v
+          const val = answers[idx] ?? 0;
+          const isRev = !!q.reversed;
+          const v = isRev ? -val : val;
+          const a = (q.axis && axisIndex[q.axis.toLowerCase()]) ?? Math.floor(idx / 25);
+          const axis = typeof a === 'number' ? a : Math.floor(idx / 25);
+          axisCounts[axis].sum += v;
           if (v > 0) {
-            axisCounts[axis].positive++
+            axisCounts[axis].positive++;
           } else if (v < 0) {
-            axisCounts[axis].negative++
+            axisCounts[axis].negative++;
           }
-        })
+        });
 
         const letters = axisCounts.map((counts, i) => {
           if (counts.positive > counts.negative) {
-            return axisPairs[i][0]
+            return axisPairs[i][0];
           } else if (counts.negative > counts.positive) {
-            return axisPairs[i][1]
+            return axisPairs[i][1];
           } else {
-            return counts.sum >= 0 ? axisPairs[i][0] : axisPairs[i][1]
+            return counts.sum >= 0 ? axisPairs[i][0] : axisPairs[i][1];
           }
-        })
-        const code = letters.join('')
+        });
+        const code = letters.join('');
         const mapping = motherTypes[code] ?? {
           code,
           label: code,
@@ -371,10 +370,10 @@ export default function QuizPage() {
           strengths: [],
           challenges: [],
           tips: [],
-          color: '#A65661'
-        }
-        const sums = axisCounts.map(c => c.sum)
-        localStorage.setItem('quizOrder', JSON.stringify(shuffledQuestionsWithIndex.map(item => item.originalIndex)))
+          color: '#A65661',
+        };
+        const sums = axisCounts.map((c) => c.sum);
+        localStorage.setItem('quizOrder', JSON.stringify(shuffledQuestionsWithIndex.map((item) => item.originalIndex)));
         const params = new URLSearchParams({
           score: '0',
           code: mapping.code,
@@ -382,10 +381,10 @@ export default function QuizPage() {
           summary: mapping.summary,
           axis: JSON.stringify(sums),
           counts: JSON.stringify(axisCounts),
-        })
-        router.push(`/result?${params.toString()}`)
-      }, 3000)
-    }, 0)
+        });
+        router.push(`/result?${params.toString()}`);
+      }, duration);
+    }, 0);
 
     // 축별 카운트와 점수 합계 (각 축별로 25문항씩)
     const axisCounts = [
