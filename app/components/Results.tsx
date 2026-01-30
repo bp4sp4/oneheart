@@ -10,9 +10,19 @@ export default function Results({
 }) {
   const [showShare, setShowShare] = useState(false);
   const [shareTimeout, setShareTimeout] = useState<NodeJS.Timeout | null>(null);
+  const [shareStart, setShareStart] = useState<number | null>(null);
   const overlayRef = useRef<HTMLDivElement>(null);
 
   const handleShare = async () => {
+    const minDuration = 7000;
+    const now = Date.now();
+    setShareStart(now);
+    setShowShare(true);
+    if (shareTimeout) clearTimeout(shareTimeout);
+    const hideOverlay = () => {
+      setShowShare(false);
+      setShareStart(null);
+    };
     if (navigator.share) {
       try {
         await navigator.share({
@@ -20,25 +30,19 @@ export default function Results({
           text: `${mapping.summary}`,
           url: window.location.href,
         });
-        // 공유 성공 시 오버레이 7초간 노출
-        setShowShare(true);
-        if (shareTimeout) clearTimeout(shareTimeout);
-        setShareTimeout(setTimeout(() => setShowShare(false), 7000));
+        // 공유 성공/취소 모두 최소 7초 보장
+        setShareTimeout(setTimeout(hideOverlay, minDuration));
       } catch (e) {
-        // 취소 시에도 오버레이 노출
-        setShowShare(true);
-        if (shareTimeout) clearTimeout(shareTimeout);
-        setShareTimeout(setTimeout(() => setShowShare(false), 7000));
+        setShareTimeout(setTimeout(hideOverlay, minDuration));
       }
     } else {
       // fallback: 링크 복사
       try {
         await navigator.clipboard.writeText(window.location.href);
-        setShowShare(true);
-        if (shareTimeout) clearTimeout(shareTimeout);
-        setShareTimeout(setTimeout(() => setShowShare(false), 7000));
+        setShareTimeout(setTimeout(hideOverlay, minDuration));
       } catch (e) {
         alert('공유를 지원하지 않는 브라우저입니다. 링크가 복사되었습니다.');
+        setShareTimeout(setTimeout(hideOverlay, minDuration));
       }
     }
   };

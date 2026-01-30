@@ -53,7 +53,7 @@ function SuccessPending() {
 function PaymentSuccessContent() {
   const searchParams = useSearchParams();
   const [status, setStatus] = useState<'loading' | 'pending' | 'success' | 'error'>('loading');
-  const [showLoading, setShowLoading] = useState(true);
+  // const [showLoading, setShowLoading] = useState(true);
   const [errorDetails, setErrorDetails] = useState<any>(null);
   const [testAccessToken, setTestAccessToken] = useState<string | null>(null);
   const confirmingRef = useRef(false);
@@ -62,12 +62,8 @@ function PaymentSuccessContent() {
   const orderId = searchParams?.get("orderId");
   const amount = searchParams?.get("amount");
 
-  // 최소 3초간 로딩 오버레이 보장
   useEffect(() => {
     let cancelled = false;
-    setShowLoading(true);
-    const minTime = 3000;
-    const start = Date.now();
     const confirmPayment = async () => {
       if (confirmingRef.current) return;
       confirmingRef.current = true;
@@ -75,7 +71,6 @@ function PaymentSuccessContent() {
         setStatus('error');
         setErrorDetails({ message: 'URL에서 결제 정보를 찾을 수 없습니다.' });
         confirmingRef.current = false;
-        setShowLoading(false);
         return;
       }
       const token = localStorage.getItem("testAccessToken");
@@ -105,13 +100,6 @@ function PaymentSuccessContent() {
         }
       } finally {
         confirmingRef.current = false;
-        // 최소 3초 보장
-        const elapsed = Date.now() - start;
-        if (elapsed < minTime) {
-          setTimeout(() => setShowLoading(false), minTime - elapsed);
-        } else {
-          setShowLoading(false);
-        }
       }
     };
     confirmPayment();
@@ -159,11 +147,7 @@ function PaymentSuccessContent() {
     });
   };
   
-  // 로딩 오버레이 항상 위에 렌더링
-  // 모바일에서 빠르게 사라지지 않도록 showLoading이 true면 오버레이만 보여줌
-  if (showLoading) {
-    return <SuccessLoadingOverlay visible={showLoading} />;
-  }
+
 
   if (status === 'pending') {
     return <SuccessPending />;
