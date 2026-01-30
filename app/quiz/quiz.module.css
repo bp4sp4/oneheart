@@ -57,23 +57,39 @@ line-height: normal;
   white-space: nowrap;
 }
 
+
+
 .progressBarContainer {
   height: 12px;
-  background: #e4e4e4;
+  background: #E4E4E4;
   border-radius: 2px;
   overflow: hidden;
-  
   flex: 1;
   width: 100%;
+  position: relative;
+  display: flex;
+  align-items: center;
 }
+
 
 .progressBarFill {
   height: 100%;
   background: #A65661;
   border-radius: 2px;
-  transition: width 0.5s ease;
-  box-shadow: 0 2px 8px rgba(166, 86, 97, 0.35);
-  min-width: 6px; /* visible even for very small percentages */
+  transition: width 0.5s cubic-bezier(0.4,0,0.2,1);
+  min-width: 12px;
+}
+
+
+.progressBarPercent {
+  color: var(--Grayscale-300, #D0D0D0);
+  text-align: right;
+  font-family: Pretendard, sans-serif;
+  font-size: 18px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: normal;
+  z-index: 2;
 }
 
 .description {

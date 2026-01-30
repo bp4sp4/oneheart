@@ -426,7 +426,7 @@ export default function QuizPage() {
           left: 0,
           right: 0,
           bottom: 0,
-          background: 'radial-gradient(50.27% 50% at 50% 50%, #FFF 0%, #FFE8E8 100%), #F9F9F9',
+          background: 'linear-gradient(0deg, #020301 0%, #020301 100%), radial-gradient(50.27% 50% at 50% 50%, #FFF 0%, #FFE8E8 100%)',
           zIndex: 9999,
           display: 'flex',
           alignItems: 'center',
@@ -434,37 +434,34 @@ export default function QuizPage() {
         }}>
           <div style={{
             display: 'flex',
-            width: '360px',
-            padding: '216px 16px 226px 16px',
             flexDirection: 'column',
             alignItems: 'center',
-            gap: '267px'
+            justifyContent: 'center',
+            gap: '32px',
+            width: '100%',
+            height: '100%'
           }}>
             <div style={{
-              color: '#1D1D1D',
+              color: '#FCFCFC',
               textAlign: 'center',
               fontFamily: 'Pretendard',
               fontSize: '24px',
               fontStyle: 'normal',
               fontWeight: '700',
-              lineHeight: 'normal'
+              lineHeight: 'normal',
+              marginBottom: '24px'
             }}>
               결과를 분석중입니다
             </div>
-            <div style={{
-              width: '320px',
-              height: '8px',
-              background: '#e5e7eb',
-              borderRadius: '20px',
-              overflow: 'hidden'
-            }}>
-              <div style={{
-                height: '100%',
-                background: '#A65661',
-                width: `${calculatingProgress}%`,
-                borderRadius: '20px',
-                transition: 'width 0.05s linear'
-              }}></div>
+            <img src="/images/loading.gif" alt="로딩중" style={{ width: '236px', height: '236px', marginBottom: '32px' }} />
+            <div style={{ width: '100%', maxWidth: 360, background: 'transparent', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 12 }}>
+              <div className={styles.progressBarContainer}>
+                <div
+                  className={styles.progressBarFill}
+                  style={{ width: `${calculatingProgress}%` }}
+                />
+              </div>
+              <span className={styles.progressBarPercent} style={{ position: 'static', marginLeft: 12 }}>{Math.round(calculatingProgress)}%</span>
             </div>
           </div>
         </div>
@@ -481,19 +478,20 @@ export default function QuizPage() {
 
           <div className={styles.progressBox}>
             <div className={styles.progressRow}>
+
               <div className={styles.progressBarContainer}>
-                  {(() => {
-                    const percent = ((currentPage + 1) / totalPages) * 100
-                    const minPercent = 100 / Math.max(1, totalPages)
-                    const fillPercent = Math.max(percent, minPercent)
-                    return (
-                      <div
-                        className={styles.progressBarFill}
-                        style={{ width: `${fillPercent}%` }}
-                      />
-                    )
-                  })()}
-                </div>
+                {(() => {
+                  const percent = ((currentPage + 1) / totalPages) * 100;
+                  const minPercent = 100 / Math.max(1, totalPages);
+                  const fillPercent = Math.max(percent, minPercent);
+                  return (
+                    <div
+                      className={styles.progressBarFill}
+                      style={{ width: `${fillPercent}%` }}
+                    />
+                  );
+                })()}
+              </div>
 
               {/* continuous progress bar (same on mobile and desktop) */}
               <span className={styles.stepBadge}>
@@ -654,13 +652,9 @@ function FinalControls({
 
   return (
     <div ref={controlsRef} style={{ 
-      
       padding: '32px',
- 
       borderRadius: '16px',
-   
       textAlign: 'center',
-    
     }}>
       <div style={{ display: 'flex', gap: '12px', justifyContent: 'center', flexWrap: 'wrap', maxWidth: '360px', margin: '0 auto' }}>
         <button 
