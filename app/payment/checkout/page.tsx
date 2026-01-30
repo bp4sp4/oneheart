@@ -26,7 +26,7 @@ function CheckoutContent() {
     basic: {
       title: "엄마유형테스트 결과",
       instructor: "엄마유형테스트",
-      price: 1000,
+      price: 9900,
       type: "테스트 결과",
     },
   };

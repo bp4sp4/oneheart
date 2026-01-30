@@ -9,8 +9,9 @@
   align-self: stretch;
   width: 100%;
   background: linear-gradient(0deg, rgba(144, 114, 114, 0.50) 0%, rgba(144, 114, 114, 0.50) 100%), url('/images/about/about_banner.jpg') lightgray 50% / cover no-repeat;
-  max-width : 360px;
+  max-width : 768px;
   margin : 0 auto;
+
 }
 
 .bannerTitle {
@@ -46,17 +47,12 @@
 /* About content block */
 .aboutBlock {
   display: flex;
-  width: 360px;
+  width: 768px;
   flex-direction: column;
   align-items: flex-start;
   margin: 24px 0 0;
   gap: 12px;
-}
-.aboutBlock {
-  
-  max-width: 360px;
   padding: 0 16px;
-  box-sizing: border-box;
 }
 
 .aboutHeader {
@@ -142,7 +138,7 @@
   
   gap: 12px;
   align-self: stretch;
-  max-width: 360px;
+  max-width: 768px;
   margin: 0 auto;
  
 }
@@ -232,7 +228,7 @@
   align-items: center;
   gap: 12px;
   width: 100%;
-  max-width: 360px;
+  max-width: 768px;
   margin: 0 auto;
 }
 
@@ -289,7 +285,7 @@
     align-self: stretch;
     background: #F2E6E6;
     width: 100%;
-    max-width: 360px;
+    max-width: 768px;
     margin : 0 auto 10px;
   }
 
@@ -356,7 +352,7 @@
 }
 
 .ctaInner {
-  width: 360px;
+  width: 768px;
 }
 
 .ctaButtonStart {

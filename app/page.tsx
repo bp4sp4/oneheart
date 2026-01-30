@@ -239,38 +239,7 @@ export default function HomePage() {
 
               </div>
             </section>
-      <main className={styles.main}>
-        <div className={styles.container}>
-          <h1 className={styles.title}>엄마 유형 테스트</h1>
-          <p className={styles.description}>테스트에 오신 것을 환영합니다. 간단한 질문지를 통해 유형을 확인할 수 있습니다.</p>
 
-          <div className={styles.buttonGroup}>
-            <Link href="/payment"><button className={styles.button}>결제 후 테스트 시작</button></Link>
-            <Link href="/quiz"><button className={styles.button}>결제 없이 바로 보기 (개발용)</button></Link>
-            <button 
-              onClick={testEmail} 
-              disabled={sending}
-              className={styles.emailButton}
-            >
-              {sending ? '전송 중...' : '📧 이메일 테스트'}
-            </button>
-          </div>
-
-          {emailStatus && (
-            <div className={`${styles.statusMessage} ${emailStatus.includes('✅') ? styles.statusSuccess : styles.statusError}`}>
-              {emailStatus}
-            </div>
-          )}
-
-          <section className={styles.section}>
-            <h3>간단 안내</h3>
-            <ul>
-              <li>결제 후 테스트를 시작하실 수 있습니다 (토스 연동 예정).</li>
-              <li>개발 중인 환경에서는 바로 시작 버튼으로 테스트 페이지로 이동합니다.</li>
-            </ul>
-          </section>
-        </div>
-      </main>
     </>
   )
 }

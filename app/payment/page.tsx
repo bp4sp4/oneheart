@@ -1,14 +1,16 @@
 "use client";
 
 import { useState, Suspense, useEffect } from "react";
+import Header from "../components/Header";
+import Footer from "../components/Footer";
 import { useSearchParams } from "next/navigation";
 
 // 로딩 컴포넌트
 function PaymentLoading() {
   return (
-    <div style={{ 
-      textAlign: 'center', 
-      padding: '100px 20px' 
+    <div style={{
+      textAlign: 'center',
+      padding: '100px 20px'
     }}>
       <p>로딩 중...</p>
     </div>
@@ -18,18 +20,31 @@ function PaymentLoading() {
 // 메인 페이지 컴포넌트
 export default function PaymentPage() {
   return (
-    <Suspense fallback={<PaymentLoading />}>
-      <PaymentContent />
-    </Suspense>
+    <div style={{
+      minHeight: '100vh',
+      display: 'flex',
+      flexDirection: 'column',
+    }}>
+      <Header />
+      <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
+        <Suspense fallback={<PaymentLoading />}>
+          <PaymentContent />
+        </Suspense>
+      </div>
+      <Footer />
+    </div>
   );
 }
+
+
+
 
 // 메인 컴포넌트
 function PaymentContent() {
   const [isPaymentReady, setIsPaymentReady] = useState(false);
   const [paymentError, setPaymentError] = useState<string | null>(null);
 
-  const price = 1000;
+  const price = 9900;
   const title = "엄마유형테스트 결과";
 
   // 토스페이먼츠 초기화

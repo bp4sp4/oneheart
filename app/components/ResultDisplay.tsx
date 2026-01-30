@@ -1,6 +1,7 @@
 'use client'
 
 import React, { useState, useRef } from 'react';
+import { saveElementAsImage } from './saveElementAsImage';
 import { MotherType } from '../../data/motherTypes';
 import RadarChart, { RadarChartRef } from './RadarChart';
 import styles from './ResultDisplay.module.css';
@@ -14,6 +15,7 @@ interface ResultDisplayProps {
 
 export default function ResultDisplay({ motherType, axisSums, counts }: ResultDisplayProps) {
   const chartRef = useRef<RadarChartRef>(null);
+  const cardRef = useRef<HTMLDivElement>(null);
   const [toast, setToast] = useState<string | null>(null);
   const [sending, setSending] = useState(false);
   const [email, setEmail] = useState('');
@@ -24,13 +26,15 @@ export default function ResultDisplay({ motherType, axisSums, counts }: ResultDi
     return /.+@.+\..+/.test(email);
   }
 
+  const emailsMatch = email && emailConfirm && email === emailConfirm;
+
   async function handleSendEmail() {
     if (sending) return;
     if (!validateEmail(email)) {
       setToast('이메일 주소를 올바르게 입력해주세요.');
       return;
     }
-    if (email !== emailConfirm) {
+    if (!emailsMatch) {
       setToast('이메일 주소가 일치하지 않습니다.');
       return;
     }
@@ -244,6 +248,22 @@ export default function ResultDisplay({ motherType, axisSums, counts }: ResultDi
       });
       if (res.ok) {
         setToast('이메일이 성공적으로 전송되었습니다!');
+        // 이메일 전송 성공 시 DB에 로그 저장
+        let test_access_token = '';
+        if (typeof window !== 'undefined') {
+          test_access_token = localStorage.getItem('testAccessToken') || '';
+        }
+        if (test_access_token && motherType?.code) {
+          await fetch('/api/result/email-log', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              test_access_token,
+              email,
+              result_type: motherType.code
+            })
+          });
+        }
       } else {
         const data = await res.json().catch(() => ({}));
         setToast(data.error || '이메일 전송에 실패했습니다.');
@@ -274,7 +294,7 @@ export default function ResultDisplay({ motherType, axisSums, counts }: ResultDi
           </span>
         </div>
         
-        <div className={styles.imageArea}>
+        <div className={styles.imageArea} ref={cardRef}>
           {motherType.cardImage ? (
             <img 
               src={motherType.cardImage} 
@@ -287,12 +307,33 @@ export default function ResultDisplay({ motherType, axisSums, counts }: ResultDi
             </div>
           )}
         </div>
-        
         <div className={styles.buttonGroup}>
-          <button className={styles.button}>
+          <button className={styles.button} onClick={async () => {
+            if (cardRef.current) {
+              await saveElementAsImage(cardRef.current, `${motherType.code}_card.png`);
+            }
+          }}>
             유형카드 저장
           </button>
-          <button className={styles.button}>
+          <button className={styles.button} onClick={async () => {
+            if (navigator.share && cardRef.current) {
+              // 저장 후 공유
+              const html2canvas = (await import('html2canvas')).default;
+              const canvas = await html2canvas(cardRef.current, { backgroundColor: null });
+              canvas.toBlob(blob => {
+                if (blob) {
+                  const file = new File([blob], `${motherType.code}_card.png`, { type: 'image/png' });
+                  navigator.share({
+                    files: [file],
+                    title: '내 엄마유형 카드',
+                    text: `${motherType.label} 유형 카드 공유!`
+                  });
+                }
+              }, 'image/png');
+            } else {
+              alert('이 브라우저에서는 공유 기능을 지원하지 않습니다.');
+            }
+          }}>
             유형카드 공유
           </button>
         </div>
@@ -482,12 +523,25 @@ export default function ResultDisplay({ motherType, axisSums, counts }: ResultDi
             onChange={e => setEmailConfirm(e.target.value)}
             disabled={sending}
           />
+          {email && emailConfirm && !emailsMatch && (
+            <div style={{ color: '#fff', fontSize: 13, marginTop: 4 }}>
+              이메일이 일치하지 않습니다.
+            </div>
+          )}
         </div>
         <p className={styles.emailNotice}>
           *이메일은 최초 1회만 전송가능하므로,<br/>
           입력하신 이메일 주소의 정확성을 꼭 확인해주세요.
         </p>
-        <button className={styles.emailButton} onClick={handleSendEmail} disabled={sending}>
+        <button
+          className={styles.emailButton}
+          onClick={handleSendEmail}
+          disabled={
+            sending ||
+            !emailsMatch ||
+            !validateEmail(email)
+          }
+        >
           {sending ? '전송 중...' : '이메일로 결과 받기'}
         </button>
         {toast && (

@@ -12,7 +12,7 @@ export async function POST(req: Request) {
       .from('test_progress')
       .select('question_order')
       .eq('test_access_token', token)
-      .single()
+      .maybeSingle()
 
     if (error) {
       console.error('Supabase fetch question order error:', error)

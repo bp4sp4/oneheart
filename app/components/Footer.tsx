@@ -21,6 +21,8 @@ export default function Footer() {
             <span className={styles.divider}>|</span>
             <Link href="/privacy" className={styles.footerLink}>개인정보처리방침</Link>
           </div>
+          <p className={styles.infoLine}>문의 : korhrdpartners@gmail.com
+ </p>
           <p className={styles.copyright}>2026 © Hanmaum Lab (KORHRD Partners). All rights reserved.</p>
         </div>
       </div>
