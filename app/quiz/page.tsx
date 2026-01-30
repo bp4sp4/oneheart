@@ -306,167 +306,84 @@ export default function QuizPage() {
       return
     }
 
-    // 로딩 오버레이를 즉시 보여주기 위해 setTimeout 0으로 분리
     setIsCalculating(true)
     setCalculatingProgress(0)
 
-    // 다음 tick에 바로 애니메이션 시작 (오버레이가 렌더된 후)
-    setTimeout(() => {
-      // 3.5초 고정 (모바일에서도 확실히 보이도록)
-      const duration = 3500; // 3.5초
-      const interval = 50;
-      const steps = duration / interval;
-      let step = 0;
+    // 1. 애니메이션 설정
+    const totalDuration = 7000; // 7초로 연장
+    const intervalTime = 50;
+    const totalSteps = totalDuration / intervalTime;
+    let currentStep = 0;
 
-      const progressInterval = setInterval(() => {
-        step++;
-        setCalculatingProgress((step / steps) * 100);
-        if (step >= steps) {
-          clearInterval(progressInterval);
-        }
-      }, interval);
-
-      // duration 대기 후 점수 계산
-      setTimeout(async () => {
-        // ...existing score calculation logic below...
-        const axisCounts = [
-          { positive: 0, negative: 0, sum: 0 }, // A축: R vs E
-          { positive: 0, negative: 0, sum: 0 }, // B축: S vs L
-          { positive: 0, negative: 0, sum: 0 }, // C축: P vs O
-          { positive: 0, negative: 0, sum: 0 }, // D축: C vs T
-        ];
-        const axisIndex: Record<string, number> = { a: 0, b: 1, c: 2, d: 3 };
-
-        questions.forEach((q, idx) => {
-          const val = answers[idx] ?? 0;
-          const isRev = !!q.reversed;
-          const v = isRev ? -val : val;
-          const a = (q.axis && axisIndex[q.axis.toLowerCase()]) ?? Math.floor(idx / 25);
-          const axis = typeof a === 'number' ? a : Math.floor(idx / 25);
-          axisCounts[axis].sum += v;
-          if (v > 0) {
-            axisCounts[axis].positive++;
-          } else if (v < 0) {
-            axisCounts[axis].negative++;
-          }
-        });
-
-        const letters = axisCounts.map((counts, i) => {
-          if (counts.positive > counts.negative) {
-            return axisPairs[i][0];
-          } else if (counts.negative > counts.positive) {
-            return axisPairs[i][1];
-          } else {
-            return counts.sum >= 0 ? axisPairs[i][0] : axisPairs[i][1];
-          }
-        });
-        const code = letters.join('');
-        const mapping = motherTypes[code] ?? {
-          code,
-          label: code,
-          summary: '유형 설명을 준비 중입니다',
-          description: '',
-          traits: [],
-          strengths: [],
-          challenges: [],
-          tips: [],
-          color: '#A65661',
-        };
-        const sums = axisCounts.map((c) => c.sum);
-        localStorage.setItem('quizOrder', JSON.stringify(shuffledQuestionsWithIndex.map((item) => item.originalIndex)));
-        const params = new URLSearchParams({
-          score: '0',
-          code: mapping.code,
-          label: mapping.label,
-          summary: mapping.summary,
-          axis: JSON.stringify(sums),
-          counts: JSON.stringify(axisCounts),
-        });
-        await router.push(`/result?${params.toString()}`);
-        setIsCalculating(false); // 반드시 라우팅 후에 오버레이 해제
-      }, duration);
-    }, 0);
-
-    // 축별 카운트와 점수 합계 (각 축별로 25문항씩)
-    const axisCounts = [
-      { positive: 0, negative: 0, sum: 0 }, // A축: R vs E
-      { positive: 0, negative: 0, sum: 0 }, // B축: S vs L
-      { positive: 0, negative: 0, sum: 0 }, // C축: P vs O
-      { positive: 0, negative: 0, sum: 0 }, // D축: C vs T
-    ]
-    const axisIndex: Record<string, number> = { a: 0, b: 1, c: 2, d: 3 }
-
-    questions.forEach((q, idx) => {
-      const val = answers[idx] ?? 0
-      
-      const isRev = !!q.reversed
-      const v = isRev ? -val : val
-      const a = (q.axis && axisIndex[q.axis.toLowerCase()]) ?? Math.floor(idx / 25)
-      const axis = typeof a === 'number' ? a : Math.floor(idx / 25)
-      
-      // 점수 합계
-      axisCounts[axis].sum += v
-      
-      // 개수 카운트 (보통이다는 제외)
-      if (v > 0) {
-        axisCounts[axis].positive++
-      } else if (v < 0) {
-        axisCounts[axis].negative++
+    const progressInterval = setInterval(() => {
+      currentStep++;
+      const percent = (currentStep / totalSteps) * 100;
+      setCalculatingProgress(Math.min(percent, 100));
+      if (currentStep >= totalSteps) {
+        clearInterval(progressInterval);
       }
-    })
+    }, intervalTime);
 
-    // 각 축에서 더 많은 쪽을 선택 (비율로 판단, 동점이면 점수 합계로 판단)
-    const letters = axisCounts.map((counts, i) => {
-      if (counts.positive > counts.negative) {
-        return axisPairs[i][0] // R, S, P, C
-      } else if (counts.negative > counts.positive) {
-        return axisPairs[i][1] // E, L, O, T
-      } else {
-        // 동점일 때는 점수 합계로 판단
-        return counts.sum >= 0 ? axisPairs[i][0] : axisPairs[i][1]
-      }
-    })
-    
-    const code = letters.join('')
-    const mapping = motherTypes[code] ?? { 
-      code, 
-      label: code, 
-      summary: '유형 설명을 준비 중입니다',
-      description: '',
-      traits: [],
-      strengths: [],
-      challenges: [],
-      tips: [],
-      color: '#A65661'
-    }
+    // 2. 실제 계산 및 페이지 이동 (설정한 시간 뒤에 실행)
+    setTimeout(async () => {
+      const axisCounts = [
+        { positive: 0, negative: 0, sum: 0 },
+        { positive: 0, negative: 0, sum: 0 },
+        { positive: 0, negative: 0, sum: 0 },
+        { positive: 0, negative: 0, sum: 0 },
+      ];
+      const axisIndex: Record<string, number> = { a: 0, b: 1, c: 2, d: 3 };
 
-    // 점수 합계 배열
-    const sums = axisCounts.map(c => c.sum)
+      questions.forEach((q, idx) => {
+        const val = answers[idx] ?? 0;
+        const isRev = !!q.reversed;
+        const v = isRev ? -val : val;
+        const a = (q.axis && axisIndex[q.axis.toLowerCase()]) ?? Math.floor(idx / 25);
+        const axis = typeof a === 'number' ? a : Math.floor(idx / 25);
+        axisCounts[axis].sum += v;
+        if (v > 0) axisCounts[axis].positive++;
+        else if (v < 0) axisCounts[axis].negative++;
+      });
 
-    // 퀴즈 순서 저장
-    localStorage.setItem('quizOrder', JSON.stringify(shuffledQuestionsWithIndex.map(item => item.originalIndex)))
+      const letters = axisCounts.map((counts, i) => {
+        if (counts.positive > counts.negative) return axisPairs[i][0];
+        if (counts.negative > counts.positive) return axisPairs[i][1];
+        return counts.sum >= 0 ? axisPairs[i][0] : axisPairs[i][1];
+      });
 
-    // 결과 페이지로 이동
-    const params = new URLSearchParams({
-      score: '0', // 비율 방식이므로 총점은 의미 없음
-      code: mapping.code,
-      label: mapping.label,
-      summary: mapping.summary,
-      axis: JSON.stringify(sums),
-      counts: JSON.stringify(axisCounts),
-    })
-    router.push(`/result?${params.toString()}`)
+      const code = letters.join('');
+      const mapping = motherTypes[code] || { code, label: code, summary: '...' };
+      const sums = axisCounts.map((c) => c.sum);
+
+      localStorage.setItem('quizOrder', JSON.stringify(shuffledQuestionsWithIndex.map((item) => item.originalIndex)));
+
+      const params = new URLSearchParams({
+        score: '0',
+        code: mapping.code,
+        label: mapping.label,
+        summary: mapping.summary,
+        axis: JSON.stringify(sums),
+        counts: JSON.stringify(axisCounts),
+      });
+
+      // 라우팅 시점 조절
+      await router.push(`/result?${params.toString()}`);
+      
+      // 페이지 이동이 시작되면 약간의 틈을 주고 오버레이 해제 (깜빡임 방지)
+      setTimeout(() => setIsCalculating(false), 500);
+    }, totalDuration);
   }
 
-  // 클라이언트 마운트 전에는 로딩 표시
-  if (!isMounted) {
-    return null;
-  }
 
   // justPaidFlag로 인해 모달이 뜨면 안 되는 경우 강제 비활성화
   const justPaidFlag = typeof window !== 'undefined' ? localStorage.getItem('justPaid') : null;
   // showConfirmModal은 useEffect에서 answers가 1개 이상일 때만 true로 설정됨
   const shouldShowModal = showConfirmModal && !justPaidFlag;
+
+  // 클라이언트 마운트 전에는 로딩 표시
+  if (!isMounted) {
+    return null;
+  }
 
   // 항상 퀴즈 리스트는 렌더링, 모달은 조건부로만 렌더링
   return (

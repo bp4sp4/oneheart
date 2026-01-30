@@ -92,9 +92,10 @@ export default function QuestionList({
             data-rev={q.reversed ? 'rev' : ''}
           >
               <div className={styles.cardHeader}>
-                <div className={styles.qtext}>{q.text}</div>
+                <div className={styles.qtext}>
+                  <span className={styles.qNumber}>{idx + 1}.</span> {q.text}
+                </div>
                 <div className={styles.qMeta}>
-                
                   {/* header button removed as requested */}
                 </div>
               </div>

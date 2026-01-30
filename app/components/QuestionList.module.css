@@ -1,3 +1,11 @@
+.qNumber {
+  display: inline-block;
+  
+  font-weight: 700;
+  
+  font-size: 1.1em;
+  margin-right: 0.3em;
+}
 /* Global styles (mobile layout applied everywhere) */
 
 /* (answered rules defined later) */
