@@ -1,6 +1,6 @@
 
-import { useSearchParams, useRouter } from 'next/navigation'
 import { useEffect, useState, useRef, Suspense } from 'react'
+import { useSearchParams, useRouter } from 'next/navigation'
 import dynamic from 'next/dynamic'
 import RadarChart, { RadarChartRef } from '../components/RadarChart'
 const ResultDisplay = dynamic(() => import('../components/ResultDisplay'), {
