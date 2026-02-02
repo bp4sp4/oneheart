@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState, useRef, Suspense } from "react";
+import Header from '../../components/Header';
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import styles from "./success.module.css";
@@ -24,7 +25,18 @@ function SuccessLoadingOverlay({ visible }: { visible: boolean }) {
   return (
     <div className={styles.loadingOverlay}>
       <div className={styles.loadingCard}>
-        <img src="/images/loading.gif" alt="로딩중" className={styles.loadingGif} />
+        <img 
+          src="/images/loading.gif" 
+          alt="로딩중" 
+          className={styles.loadingGif} 
+          onError={() => {
+            if (typeof window !== 'undefined') {
+              import('../../logger').then(mod => {
+                mod.logger.log('이미지 로드 실패:', '/images/loading.gif');
+              });
+            }
+          }}
+        />
         <div className={styles.loadingText}>결제 정보를 확인 중입니다...</div>
         <div className={styles.loadingProgressBarWrap}>
           <div className={styles.loadingProgressBarBg}>
@@ -238,8 +250,12 @@ function PaymentSuccessContent() {
 // 메인 페이지 컴포넌트
 export default function PaymentSuccessPage() {
   return (
-    <Suspense fallback={<div />}>
-      <PaymentSuccessContent />
-    </Suspense>
+    <>
+      <Header />
+      <Suspense fallback={<div />}>
+        <PaymentSuccessContent />
+      </Suspense>
+      
+    </>
   );
 }

@@ -9,7 +9,7 @@ export default function Footer() {
       <div className={styles.footerContent}>
         <div className={styles.footerLogo}>
           <span className={styles.logoText}>
-            <img src="images/logo.png" alt="BaroCompany Logo" />
+            <img src="/images/logo.png" alt="BaroCompany Logo" />
           </span>
         </div>
         

@@ -1,6 +1,6 @@
 "use client"
 import { logger } from '../logger';
-import { useMemo, useState, useEffect, useRef } from 'react'
+import { useMemo, useState, useEffect, useRef, Suspense } from 'react'
 import { useSearchParams, useRouter } from 'next/navigation'
 import Header from '../components/Header'
 import QuestionList from '../components/QuestionList'
@@ -11,7 +11,7 @@ import styles from './quiz.module.css'
 import ConfirmModal from '../components/ConfirmModal';
 import { width } from 'pdfkit/js/page'
 
-export default function QuizPage() {
+function QuizPageInner() {
   // ...existing code...
   // (모든 state 선언 이후에 위치해야 함)
   // ...state declarations...
@@ -20,10 +20,6 @@ export default function QuizPage() {
   const router = useRouter()
   const pay = search?.get('pay')
   const orderNoQuery = search?.get('orderNo')
-
-
-
-
 
   useEffect(() => {
     // if redirected from Toss (pay=success), verify payment status before allowing the quiz
@@ -611,6 +607,14 @@ export default function QuizPage() {
         )}
       </section>
     </main>
+  )
+}
+
+export default function QuizPage() {
+  return (
+    <Suspense fallback={<div>로딩 중...</div>}>
+      <QuizPageInner />
+    </Suspense>
   )
 }
 

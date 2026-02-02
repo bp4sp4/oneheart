@@ -14,7 +14,7 @@
     justify-content: space-between;
     padding: 16px 20px;
     background: white;
-    border-bottom: 1px solid #e9ecef;
+
     position: sticky;
     top: 0;
     z-index: 100;
@@ -216,9 +216,105 @@
     cursor: not-allowed;
 }
 
-/* 반응형 디자인 */
-@media (min-width: 481px) {
-    .header {
-        border-radius: 12px 12px 0 0;
-    }
+.paymentLayout {
+  max-width: 768px;
+  width: 100%;
+  background: radial-gradient(76.25% 52.98% at 50% 50%, #FFF 0%, #FFE8E8 100%), #A65661;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.08);
+  padding: 51px 0px;
+  overflow: hidden;
+}
+
+.paymentTitle {
+  color: #A65661;
+  text-align: center;
+  font-family: "Gowun Batang", serif;
+  font-size: var(--unit-8, 32px);
+  font-style: normal;
+  font-weight: 400;
+  line-height: normal;
+  margin-top: 48px;
+  margin-bottom: 8px;
+}
+
+.paymentSubtitle {
+  color: #1D1D1D;
+  text-align: center;
+  font-family: "Gowun Batang", serif;
+  font-size: var(--unit-8, 32px);
+  font-style: normal;
+  font-weight: 400;
+  line-height: normal;
+  margin-bottom: 32px;
+}
+
+.paymentEngSubtitle {
+  color: #1D1D1D;
+  text-align: center;
+  font-family: 'Pretendard', sans-serif;
+  font-size: var(--unit-5, 16px);
+  font-style: normal;
+  font-weight: 300;
+  line-height: normal;
+  margin-bottom: 22px;
+}
+
+.paymentCardImage {
+  width: 294.327px;
+  height: 431.345px;
+  object-fit: contain;
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.paymentDesc {
+  color: #1D1D1D;
+  text-align: center;
+  font-family: 'Pretendard', sans-serif;
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 300;
+  line-height: 140%;
+  margin-top: 24px;
+  margin-bottom: 19px;
+}
+
+.paymentDescBold {
+  color: #1D1D1D;
+  font-family: 'Pretendard', sans-serif;
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 700;
+  line-height: 140%;
+}
+
+.paymentButtonWrap {
+  display: flex;
+  width: 328px;
+  padding: var(--unit-5, 16px);
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  border-radius: 4px;
+  background: #A65661;
+  margin: 0 auto;
+}
+.paymentButton {
+  color: #FFF;
+  font-family: 'Pretendard', sans-serif;
+  font-size: 16px;
+  font-style: normal;
+  font-weight: 600;
+  line-height: normal;
+  background: none;
+  border: none;
+  cursor: pointer;
+  width: 100%;
+  padding: 0;
 }

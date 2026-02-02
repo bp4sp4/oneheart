@@ -5,6 +5,7 @@ import { useState, Suspense, useEffect } from "react";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
 import { useSearchParams } from "next/navigation";
+import styles from "./payment.module.css";
 
 // 로딩 컴포넌트
 function PaymentLoading() {
@@ -21,19 +22,12 @@ function PaymentLoading() {
 // 메인 페이지 컴포넌트
 export default function PaymentPage() {
   return (
-    <div style={{
-      minHeight: '100vh',
-      display: 'flex',
-      flexDirection: 'column',
-    }}>
+    <>
       <Header />
-      <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
         <Suspense fallback={<PaymentLoading />}>
           <PaymentContent />
         </Suspense>
-      </div>
-      
-    </div>
+    </>
   );
 }
 
@@ -145,80 +139,40 @@ function PaymentContent() {
   };
 
   return (
-    <div style={{ 
-      maxWidth: '400px', 
-      margin: '100px auto', 
-      padding: '40px 20px',
-      textAlign: 'center'
-    }}>
-      <h1 style={{ 
-        fontSize: '24px', 
-        marginBottom: '20px',
-        color: '#333'
-      }}>
-        {title}
-      </h1>
+    <div className={styles.paymentLayout}>
       
-      <p style={{ 
-        fontSize: '32px', 
-        fontWeight: 'bold',
-        marginBottom: '40px',
-        color: '#2B7FFF'
-      }}>
-        ₩{price.toLocaleString()}
-      </p>
-
-      {paymentError && (
-        <div style={{ 
-          color: 'red', 
-          marginBottom: '20px',
-          padding: '10px',
-          background: '#fee',
-          borderRadius: '4px'
-        }}>
-          <p>{paymentError}</p>
-          <button
-            onClick={() => window.location.reload()}
-            style={{
-              marginTop: '10px',
-              padding: '8px 16px',
-              background: '#2B7FFF',
-              color: 'white',
-              border: 'none',
-              borderRadius: '4px',
-              cursor: 'pointer'
-            }}
-          >
-            다시 시도
-          </button>
+        <div className={styles.paymentTitle}>엄마 <span className={styles.paymentSubtitle}>유형 테스트</span></div>
+        <div className={styles.paymentEngSubtitle}>MOTHER TYPE TEST</div>
+        <img src="/payment.png" alt="엄마유형 카드 예시" className={styles.paymentCardImage} />
+        <div className={styles.paymentDesc}>
+          16가지의 유형 중, 나는 <span className={styles.paymentDescBold}>아이에게 어떤 엄마</span>일까요?<br />
+          내 감정 반응의 패턴을 종합적으로 확인해보세요.
         </div>
-      )}
-
-      {!paymentError && !isPaymentReady && (
-        <p style={{ color: '#666' }}>결제 시스템을 준비하고 있습니다...</p>
-      )}
-
-      {isPaymentReady && !paymentError && (
-        <button 
-          onClick={handlePayment}
-          style={{
-            width: '100%',
-            padding: '16px',
-            fontSize: '18px',
-            fontWeight: 'bold',
-            background: '#2B7FFF',
-            color: 'white',
-            border: 'none',
-            borderRadius: '8px',
-            cursor: 'pointer',
-            transition: 'background 0.2s'
-          }}
-          onMouseOver={(e) => e.currentTarget.style.background = '#1a6be6'}
-          onMouseOut={(e) => e.currentTarget.style.background = '#2B7FFF'}
-        >
-          결제하기
-        </button>
-      )}
-    </div>
+        {paymentError && (
+          <div style={{ color: 'red', marginBottom: '20px', padding: '10px', background: '#fee', borderRadius: '4px' }}>
+            <p>{paymentError}</p>
+            <button
+              onClick={() => window.location.reload()}
+              style={{ marginTop: '10px', padding: '8px 16px', background: '#2B7FFF', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer' }}
+            >
+              다시 시도
+            </button>
+          </div>
+        )}
+        {!paymentError && !isPaymentReady && (
+          <p style={{ color: '#666', textAlign: 'center' }}>결제 시스템을 준비하고 있습니다...</p>
+        )}
+        {isPaymentReady && !paymentError && (
+          <div className={styles.paymentButtonWrap}>
+            <button 
+              className={styles.paymentButton}
+              onClick={handlePayment}
+            >
+              9,900원으로 바로 테스트하기
+            </button>
+          </div>
+        )}
+      </div>
+    
   );
 }
