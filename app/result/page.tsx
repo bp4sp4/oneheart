@@ -1,19 +1,13 @@
-"use client"
+
 import { useSearchParams, useRouter } from 'next/navigation'
-import { useEffect, useState, useRef } from 'react'
+import { useEffect, useState, useRef, Suspense } from 'react'
 import dynamic from 'next/dynamic'
-
 import RadarChart, { RadarChartRef } from '../components/RadarChart'
-
-// 동적 import로 ResultDisplay 컴포넌트 로드
 const ResultDisplay = dynamic(() => import('../components/ResultDisplay'), {
   loading: () => <p>컴포넌트를 로드하는 중...</p>
 })
-
 import { motherTypes } from '../../data/motherTypes'
 import styles from './result.module.css'
-
-// supabase import 제거, MotherResponse 타입은 아래에서 직접 정의
 
 type MotherResponse = {
   total: number
@@ -24,7 +18,7 @@ type MotherResponse = {
   quizOrder?: number[]
 }
 
-export default function ResultPage() {
+function ResultPageInner() {
   const searchParams = useSearchParams()
   const router = useRouter()
   const chartRef = useRef<RadarChartRef>(null)
@@ -38,14 +32,11 @@ export default function ResultPage() {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const handlePayment = async () => {
-    // 결과를 localStorage에 저장
     const storedOrder = localStorage.getItem('quizOrder')
     const quizOrder = storedOrder ? JSON.parse(storedOrder) : null
     localStorage.setItem('quizResult', JSON.stringify({ ...result, quizOrder }));
-    // 결제 위젯 페이지로 이동
     router.push('/pay/checkout');
   }
-
   useEffect(() => {
     try {
       const scoreParam = searchParams?.get('score')
@@ -54,23 +45,17 @@ export default function ResultPage() {
       const summaryParam = searchParams?.get('summary')
       const axisParam = searchParams?.get('axis')
       const countsParam = searchParams?.get('counts')
-
       console.log('Result page params:', { scoreParam, codeParam, labelParam, summaryParam, axisParam, countsParam })
-
       if (scoreParam && codeParam && labelParam && axisParam) {
         const parsedAxisSums = JSON.parse(decodeURIComponent(axisParam))
         const parsedCounts = countsParam ? JSON.parse(decodeURIComponent(countsParam)) : null
         const totalScore = parseInt(scoreParam)
-        
-        // 토스 검수용: 모든 결과를 EOPC로 강제 설정
         setResult({
           score: totalScore,
           mapping: motherTypes['EOPC'],
           axisSums: parsedAxisSums,
           counts: parsedCounts,
         })
-
-        // 콘솔에 상세 점수 출력
         console.group('📊 테스트 결과 상세 (비율 방식)')
         console.log('유형 코드:', codeParam)
         console.log('유형 이름:', labelParam)
@@ -82,12 +67,10 @@ export default function ResultPage() {
           ['P (Proactive)', 'O (Observant)'],
           ['C (Concerned)', 'T (Trusting)']
         ]
-        
         if (parsedCounts) {
           parsedCounts.forEach((count: any, i: number) => {
             let chosen: string
             let reason: string
-            
             if (count.positive > count.negative) {
               chosen = axisPairs[i][0]
               reason = '개수 더 많음'
@@ -95,12 +78,10 @@ export default function ResultPage() {
               chosen = axisPairs[i][1]
               reason = '개수 더 많음'
             } else {
-              // 동점일 때
               const scoreSum = count.sum || 0
               chosen = scoreSum >= 0 ? axisPairs[i][0] : axisPairs[i][1]
               reason = `동점 → 점수합계(${scoreSum > 0 ? '+' : ''}${scoreSum})로 판단`
             }
-            
             const total = count.positive + count.negative
             const neutral = 25 - total
             const ratio = total > 0 ? Math.round((Math.max(count.positive, count.negative) / total) * 100) : 0
@@ -114,14 +95,11 @@ export default function ResultPage() {
           })
         }
         console.groupEnd()
-      } else {
-        // 결과가 없으면 코드 입력 폼 표시
       }
     } catch (error) {
       console.error('Error loading result:', error)
     }
   }, [searchParams, router])
-
   const handleRecovery = async () => {
     if (!recoveryCode.trim()) {
       setError('복원 코드를 입력하세요.')
@@ -141,7 +119,6 @@ export default function ResultPage() {
         return
       }
       const mother: MotherResponse = data.mother
-      // 결과 설정
       const axisSums: number[] = []
       const axisPairs = [
         ['R', 'E'],
@@ -152,7 +129,6 @@ export default function ResultPage() {
       axisPairs.forEach(([pos, neg]) => {
         axisSums.push(mother.scores[pos] || -(mother.scores[neg] || 0))
       })
-      // 퀴즈 순서 복원
       if (mother.quizOrder) {
         localStorage.setItem('quizOrder', JSON.stringify(mother.quizOrder))
       }
@@ -171,7 +147,6 @@ export default function ResultPage() {
       setLoading(false)
     }
   }
-
   if (!result) {
     return (
       <div className={styles.loading}>
@@ -195,10 +170,8 @@ export default function ResultPage() {
       </div>
     )
   }
-
   return (
     <main className={styles.container}>
-      {/* 토스 검수용: EOPC 유형만 표시 */}
       <ResultDisplay 
         motherType={motherTypes['EOPC']}
         axisSums={result.axisSums}
@@ -207,3 +180,12 @@ export default function ResultPage() {
     </main>
   )
 }
+
+export default function ResultPage() {
+  return (
+    <Suspense fallback={<div>로딩 중...</div>}>
+      <ResultPageInner />
+    </Suspense>
+  )
+}
+      

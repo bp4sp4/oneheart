@@ -184,63 +184,44 @@ function PaymentSuccessContent() {
     )
   }
 
+  // ... 상단 로직 동일
+
   return (
     <div className={styles.container}>
       <div className={styles.successCard}>
-        {/* <div className={styles.successIcon}>✅</div> */} {/* 체크 아이콘 제거 */}
+        {/* 1. 헤더 영역 */}
         <h1 className={styles.successTitle}>결제가 완료되었습니다!</h1>
         <p className={styles.successMessage}>
-          엄마유형테스트를 진행하고 결과를 확인하실 수 있습니다.
+          엄마유형테스트를 진행하고<br />결과를 확인하실 수 있습니다.
         </p>
 
+        {/* 2. 복원 코드 영역 (박스 형태) */}
         {testAccessToken && (
           <div className={styles.recoveryCodeSection}>
-            <p className={styles.recoveryCodePrompt}>
-              나중에 결과를 다시 보거나 테스트를 이어하려면 아래 복원 코드를 저장하세요.
-            </p>
+            <p className={styles.recoveryCodePrompt}>복원 코드 저장</p>
             <div className={styles.recoveryCodeContainer}>
               <span className={styles.recoveryCodeText}>{testAccessToken}</span>
               <button
                 onClick={() => handleCopy(`${window.location.origin}/quiz?token=${testAccessToken}`)}
                 className={styles.copyButton}
-                style={{ marginLeft: 8 }}
               >
                 링크 복사
               </button>
             </div>
             <p className={styles.recoveryCodeHint}>
-              * 복원 코드는 고유하며, 결과를 복원하는 데 사용됩니다. 분실하지 않도록 주의하세요.
+              * 이 코드는 나중에 결과를 다시 확인하거나 테스트를 이어할 때 꼭 필요합니다.
             </p>
           </div>
         )}
 
+        {/* 3. 하단 액션 버튼 */}
         <div className={styles.buttonGroup}>
-          {testAccessToken ? (
-            <Link
-              href={`/quiz?token=${testAccessToken}`}
-              className={styles.homeButton}
-              onClick={() => {
-                // 결제 후 첫 입장임을 표시
-                if (typeof window !== 'undefined') {
-                  localStorage.setItem('justPaid', '1');
-                }
-              }}
-            >
-              테스트 이어하기
-            </Link>
-          ) : (
-            <Link
-              href="/quiz"
-              className={styles.homeButton}
-              onClick={() => {
-                if (typeof window !== 'undefined') {
-                  localStorage.setItem('justPaid', '1');
-                }
-              }}
-            >
-              테스트 시작하기
-            </Link>
-          )}
+          <Link
+            href={`/quiz?token=${testAccessToken || ''}`}
+            className={styles.homeButton}
+          >
+            테스트 진행하기
+          </Link>
         </div>
       </div>
     </div>
