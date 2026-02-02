@@ -1,4 +1,4 @@
-import { logger } from '../../logger';
+import { logger } from '../../../logger';
 import { NextResponse } from 'next/server'
 import fs from 'fs'
 import path from 'path'
