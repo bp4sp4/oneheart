@@ -7,6 +7,10 @@
 @tailwind components;
 @tailwind utilities;
 
+
+@import './normalize.css';
+@import './tokens.css';
+
 @layer base {
   :root {
     --background: 0 0% 100%;
@@ -31,9 +35,6 @@
     --radius: 0.5rem;
   }
 }
-
-@import './normalize.css';
-@import './tokens.css';
 
 /* ============================================
    Root & Body

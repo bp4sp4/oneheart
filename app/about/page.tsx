@@ -12,10 +12,6 @@ export default function AboutPage() {
         <h1 className={styles.bannerTitle}>엄마 유형 테스트</h1>
         <p className={styles.bannerSubtitle}>아이를 키우면서 생기는 걱정과 불안을 정리해보세요</p>
       </section>
-      <main className={styles.main}>
-        <div className={styles.container}>
-          {/* 추가 콘텐츠는 여기에 배치하세요. */}
-
           <section className={styles.aboutBlock}>
             <div className={styles.aboutHeader}>
               <h2 className={styles.aboutTitle}>엄마유형 테스트란?</h2>
@@ -34,9 +30,6 @@ export default function AboutPage() {
               <div className={styles.aboutCardImage} />
             </div>
           </section>
-
-        </div>
-      </main>
       <section className={styles.principlesSection}>
         <div className={styles.principlesHeader}>
           <h2 className={styles.principlesTitle}>테스트 원칙</h2>
@@ -88,7 +81,7 @@ export default function AboutPage() {
       </section>
 
       <div className={styles.disclaimer}>
-        <p>
+        <p className={styles.disclaimerText}>
           * 본 콘텐츠는 의료·심리·교육·상담 전문 서비스가 아니며,
           <br />결과는 참고용으로만 활용해 주세요.
         </p>

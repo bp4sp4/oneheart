@@ -1,11 +1,13 @@
 .footer {
   width: 100%;
-  background-color: #f8f9fa;
-  border-top: 1px solid #e9ecef;
+  background-color: #f9f9f9;
+  border-top: 1px solid #f2e6e6;
   padding: 2.5rem 1rem;
   
   max-width: 768px;
   margin: 0 auto;
+  border-inline: 1px solid #f2e6e6;
+
 }
 
 .footerContent {

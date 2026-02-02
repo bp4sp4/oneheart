@@ -36,12 +36,6 @@
   margin: 0;
 }
 
-.main {
-  width: 100%;
-  padding: 80px 16px;
-  display: flex;
-  justify-content: center;
-}
 
 
 /* About content block */
@@ -50,16 +44,19 @@
   max-width: 768px;
   flex-direction: column;
   align-items: flex-start;
-  margin: 24px 0 0;
-  gap: 12px;
-  padding: 0 16px;
+  margin: 0 auto;
+  gap: 8px;
+  padding: 80px 16px;
+  border-left: 1px solid #f2e6e6;
+border-right: 1px solid #f2e6e6;
+
 }
 
 .aboutHeader {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  gap: 4px;
+  
 
 }
 
@@ -135,20 +132,25 @@
   display: flex;
   padding: 0 16px 80px;
   flex-direction: column;
-  
   gap: 12px;
   align-self: stretch;
   max-width: 768px;
   margin: 0 auto;
- 
+ border-left: 1px solid #f2e6e6;
+border-right: 1px solid #f2e6e6;
+
+}
+
+.principlesList{
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 12px;
 }
 
 .principlesHeader {
   display: flex;
   flex-direction: column;
-  
-  gap: 4px;
-  
 }
 
 .principlesTitle {
@@ -230,15 +232,16 @@
   width: 100%;
   max-width: 768px;
   margin: 0 auto;
+  border-left: 1px solid #f2e6e6;
+  border-right: 1px solid #f2e6e6
 }
 
 .resultSampleHeader {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  
   width: 100%;
- margin : 0 auto;
+  margin : 0 auto;
 }
 
 .resultSampleTitle {
@@ -286,13 +289,16 @@
     background: #F2E6E6;
     width: 100%;
     max-width: 768px;
-    margin : 0 auto 10px;
+    margin : 0 auto;
+    border-left: 1px solid #f2e6e6;
+    border-right: 1px solid #f2e6e6;
+
   }
 
   .priceInner {
     width: 100%;
     max-width: 360px;
-    margin: 0 auto;
+    
   }
 
   .priceHeader {
@@ -307,7 +313,7 @@
     font-family: "Gowun Batang", serif;
     font-size: 18px;
     font-weight: 400;
-    
+     
   }
 
   .priceSubtitle {
@@ -347,8 +353,12 @@
 .ctaStartSection {
   display: flex;
   width: 100%;
+  max-width: 768px;
+  margin: 0 auto;
   justify-content: center;
   padding: 80px 16px 72px;
+    border-left: 1px solid #f2e6e6;
+  border-right: 1px solid #f2e6e6;
 }
 
 .ctaInner {
@@ -385,7 +395,15 @@
   font-style: normal;
   font-weight: 300;
   line-height: 140%;
+  border-left: 1px solid #f2e6e6;
+  border-right: 1px solid #f2e6e6;
+  max-width: 768px;
+  margin: 0 auto;
   
+}
+
+.disclaimerText{
+  padding-top: 10px;;
 }
 
 

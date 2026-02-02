@@ -52,6 +52,9 @@
   position: relative;
   max-width: 768px;
   margin: 0 auto;
+  border-left: 1px solid #f2e6e6;
+border-right: 1px solid #f2e6e6;
+
 }
 
 .introTitle {
@@ -83,6 +86,10 @@
   justify-content: center;
   align-items: center;
   margin: 0 auto;
+  border-left: 1px solid #f2e6e6;
+border-right: 1px solid #f2e6e6;
+
+
 }
 
 .aboutContent {
@@ -152,6 +159,9 @@
   max-width: 768px;
   margin: 0 auto;
   background: radial-gradient(88.91% 58.3% at 50% 50%, rgba(218, 171, 171, 0.50) 0%, rgba(218, 171, 171, 0.00) 87.65%);
+  border-left: 1px solid #f2e6e6;
+border-right: 1px solid #f2e6e6;
+
 }
 
 .tenMinutesTitle {
@@ -184,6 +194,10 @@
   align-items: center;
   max-width: 768px;
   margin: 0 auto;
+  border-left: 1px solid #f2e6e6;
+border-right: 1px solid #f2e6e6;
+
+
   
 }
 
@@ -305,7 +319,10 @@
   align-items: center;
   max-width: 768px;
   margin: 0 auto;
-  
+  border-left: 1px solid #f2e6e6;
+border-right: 1px solid #f2e6e6;
+
+
 }
 
 .resultContent {
@@ -369,6 +386,10 @@
   align-items: center;
   max-width: 768px;
   margin: 0 auto;
+  border-left: 1px solid #f2e6e6;
+border-right: 1px solid #f2e6e6;
+
+
 }
 
 .effectContent {
@@ -464,6 +485,10 @@
   background: radial-gradient(63.43% 50% at 50% 50%, rgba(218, 171, 171, 0.50) 0%, rgba(218, 171, 171, 0.00) 87.65%);
   max-width: 768px;
   margin: 0 auto;
+  border-left: 1px solid #f2e6e6;
+border-right: 1px solid #f2e6e6;
+
+
 }
 
 .goalText {
@@ -516,6 +541,10 @@
   background: #F2E6E6;
   max-width: 768px;
   margin: 0 auto;
+  border-left: 1px solid #f2e6e6;
+border-right: 1px solid #f2e6e6;
+
+
 }
 
 .coffeeTitle {
@@ -553,6 +582,10 @@
   background: #FFFFFF;
   max-width: 768px;
   margin: 0 auto;
+  border-left: 1px solid #f2e6e6;
+border-right: 1px solid #f2e6e6;
+
+
 }
 
 .faqContent {
@@ -628,7 +661,10 @@
   align-items: center;
   max-width: 768px;
   margin: 0 auto;
-  
+  border-left: 1px solid #f2e6e6;
+border-right: 1px solid #f2e6e6;
+
+
 }
 
 .ctaContent {
