@@ -1,3 +1,4 @@
+import { logger } from '../../logger';
 // app/api/debug-db/route.ts
 import { NextResponse } from 'next/server';
 import { supabase } from '../../../lib/db';
@@ -20,7 +21,7 @@ export async function GET() {
       data: data,
     });
   } catch (error: any) {
-    console.error('Supabase connection failed:', error);
+    logger.error('Supabase connection failed:', error);
     return NextResponse.json({
       status: 'error',
       message: 'Supabase connection failed.',

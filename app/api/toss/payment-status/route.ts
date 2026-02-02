@@ -1,3 +1,4 @@
+import { logger } from '../../logger';
 import { NextResponse } from "next/server";
 import { supabase } from "../../../../lib/db";
 
@@ -37,7 +38,7 @@ export async function GET(req: Request) {
     );
 
     const json = await res.json();
-    console.log("Toss payment-status API response:", json); // Add logging here
+    logger.log("Toss payment-status API response:", json); // Add logging here
 
     if (!res.ok) {
       return NextResponse.json(json, { status: res.status });
@@ -54,7 +55,7 @@ export async function GET(req: Request) {
           .single();
 
         if (fetchError && fetchError.code !== 'PGRST116') { // PGRST116 means no rows found
-            console.error(`Supabase fetch failed for orderId ${orderId}:`, fetchError);
+            logger.error(`Supabase fetch failed for orderId ${orderId}:`, fetchError);
         }
 
         if (order && order.status !== 'PAID') {
@@ -68,22 +69,22 @@ export async function GET(req: Request) {
               .eq("order_id", orderId);
 
             if (dbError) {
-              console.error(
+              logger.error(
                 `Supabase update failed during status check for orderId ${orderId}:`,
                 dbError
               );
             } else {
-              console.log(`Order ${orderId} status updated to PAID via status check.`);
+              logger.log(`Order ${orderId} status updated to PAID via status check.`);
             }
         }
       } catch (dbError: any) {
-        console.error(`Database operation failed for orderId ${orderId} during status check:`, dbError);
+        logger.error(`Database operation failed for orderId ${orderId} during status check:`, dbError);
       }
     }
 
     return NextResponse.json(json, { status: res.status });
   } catch (err: any) {
-    console.error("/api/toss/payment-status error:", err);
+    logger.error("/api/toss/payment-status error:", err);
     return NextResponse.json(
       { message: err?.message || String(err) },
       { status: 500 }

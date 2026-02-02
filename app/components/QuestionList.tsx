@@ -1,4 +1,5 @@
 "use client"
+import { logger } from '../logger';
 import { useEffect, useRef, useState } from 'react'
 import styles from './QuestionList.module.css'
 
@@ -116,7 +117,7 @@ export default function QuestionList({
                         value={opt}
                         checked={isChecked}
                         onChange={() => {
-                          console.log('QuestionList input change', { originalIdx, displayIdx: idx, opt })
+                          logger.log('QuestionList input change', { originalIdx, displayIdx: idx, opt })
                           handleAnswer(originalIdx, idx, opt)
                         }}
                       />

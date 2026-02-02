@@ -1,4 +1,5 @@
 "use client";
+import { logger } from '../logger';
 
 import { useState, Suspense, useEffect } from "react";
 import Header from "../components/Header";
@@ -51,7 +52,7 @@ function PaymentContent() {
   useEffect(() => {
     async function initializeTossPayments() {
       try {
-        console.log("토스페이먼츠 초기화 시작...");
+        logger.log("토스페이먼츠 초기화 시작...");
 
         const clientKey = process.env.NEXT_PUBLIC_TOSS_CLIENT_KEY;
         if (!clientKey) {
@@ -87,7 +88,7 @@ function PaymentContent() {
         // 결제 요청 함수를 전역으로 저장
         (window as unknown as Record<string, unknown>).tossPayment = payment;
 
-        console.log("토스페이먼츠 초기화 완료");
+        logger.log("토스페이먼츠 초기화 완료");
         setIsPaymentReady(true);
         setPaymentError(null);
       } catch (error) {
@@ -118,7 +119,7 @@ function PaymentContent() {
         .toString(36)
         .substr(2, 9)}`;
 
-      console.log("결제 요청:", {
+      logger.log("결제 요청:", {
         orderId,
         orderName: title,
         amount: price,

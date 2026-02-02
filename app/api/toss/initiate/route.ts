@@ -1,3 +1,4 @@
+import { logger } from '../../logger';
 import { NextResponse } from 'next/server'
 import { supabase } from '../../../../lib/db' // Use the unified Supabase client
 import crypto from 'crypto';
@@ -48,7 +49,7 @@ export async function POST(req: Request) {
       });
 
     if (insertError) {
-      console.error('Supabase insert order failed:', insertError);
+      logger.error('Supabase insert order failed:', insertError);
       return NextResponse.json({ error: 'database_error', message: 'Failed to create an order record.' }, { status: 500 });
     }
 
@@ -73,8 +74,8 @@ export async function POST(req: Request) {
     const tossJson = await tossResponse.json();
 
     if (!tossResponse.ok) {
-      console.error('Toss create failed; sent payload:', JSON.stringify(tossPayload))
-      console.error('Toss response:', tossJson)
+      logger.error('Toss create failed; sent payload:', JSON.stringify(tossPayload))
+      logger.error('Toss response:', tossJson)
       // Attempt to clean up the pending order we created
       await supabase.from('orders').delete().eq('order_id', orderId);
       return NextResponse.json({ error: 'toss_create_failed', details: tossJson }, { status: tossResponse.status || 500 })
@@ -84,7 +85,7 @@ export async function POST(req: Request) {
     return NextResponse.json({ checkoutUrl: tossJson.checkout.url, orderId: orderId });
 
   } catch (err: any) {
-    console.error('Initiate payment error:', err);
+    logger.error('Initiate payment error:', err);
     return NextResponse.json({ error: err?.message || 'failed' }, { status: 500 })
   }
 }

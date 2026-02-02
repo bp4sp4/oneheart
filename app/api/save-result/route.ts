@@ -2,27 +2,28 @@ export const runtime = 'nodejs'
 
 import { NextResponse } from 'next/server'
 import { supabase } from '../../../lib/db'
+import { logger } from '../../logger';
 import nodeCrypto from 'crypto'
 
 export async function POST(req: Request) {
   try {
     const body = await req.json()
-    console.log('/api/save-result body:', body)
+    logger.log('/api/save-result body:', body)
     const { result, orderId, quizOrder } = body
 
     if (!result) return NextResponse.json({ error: 'missing result' }, { status: 400 })
 
     const sb = supabase
-    console.log('/api/save-result supabase type:', typeof supabase, 'sb:', typeof sb)
+    logger.log('/api/save-result supabase type:', typeof supabase, 'sb:', typeof sb)
     if (!sb) {
-      console.error('Supabase client not available')
+      logger.error('Supabase client not available')
       return NextResponse.json({ error: 'Supabase not configured' }, { status: 500 })
     }
-    console.log('sb.from type:', typeof (sb as any).from)
+    logger.log('sb.from type:', typeof (sb as any).from)
 
     // Use Node crypto to generate a short hex recovery code
     const recoveryCode = nodeCrypto.randomBytes(4).toString('hex').toUpperCase()
-    console.log('Generated recoveryCode:', recoveryCode)
+    logger.log('Generated recoveryCode:', recoveryCode)
 
     const axisPairs = [ ['R','E'], ['S','L'], ['P','O'], ['C','T'] ]
     const scores: Record<string, number> = {}
@@ -50,30 +51,30 @@ export async function POST(req: Request) {
     try {
       // Dump sb internals for debugging
       try {
-        console.log('sb keys:', Object.keys(sb as any))
-        console.dir(sb, { depth: 2 })
+        logger.log('sb keys:', Object.keys(sb as any))
+        // console.dir(sb, { depth: 2 })
       } catch (dErr) {
-        console.warn('Failed to dir sb:', dErr)
+        logger.warn('Failed to dir sb:', dErr)
       }
 
       // Inspect return value of from('mothers')
       let fromObj: any
       try {
         fromObj = (sb as any).from('mothers')
-        console.log('fromObj type:', typeof fromObj)
+        logger.log('fromObj type:', typeof fromObj)
         try {
-          console.log('fromObj keys:', Object.keys(fromObj))
-          console.dir(fromObj, { depth: 2 })
+          logger.log('fromObj keys:', Object.keys(fromObj))
+          // console.dir(fromObj, { depth: 2 })
         } catch (innerErr) {
-          console.warn('Failed to dir fromObj:', innerErr)
+          logger.warn('Failed to dir fromObj:', innerErr)
         }
       } catch (fromErr) {
-        console.error('calling sb.from threw:', fromErr)
+        logger.error('calling sb.from threw:', fromErr)
         throw fromErr
       }
 
       if (!fromObj || typeof fromObj.insert !== 'function') {
-        console.warn('fromObj.insert is not a function, will attempt REST fallback')
+        logger.warn('fromObj.insert is not a function, will attempt REST fallback')
         // REST fallback
         const supaUrl = process.env.SUPABASE_URL
         const supaKey = process.env.SUPABASE_SERVICE_ROLE_KEY
@@ -81,7 +82,7 @@ export async function POST(req: Request) {
           throw new Error('fromObj.insert not available and SUPABASE env not set for REST fallback')
         }
         const restUrl = `${supaUrl.replace(/\/$/, '')}/rest/v1/mothers`
-        console.log('Attempting REST POST to', restUrl)
+        logger.log('Attempting REST POST to', restUrl)
         const resp = await fetch(restUrl, {
           method: 'POST',
           headers: {
@@ -105,17 +106,17 @@ export async function POST(req: Request) {
         error = res?.error ?? null
       }
     } catch (e) {
-      console.error('Error while inserting to mothers:', e)
+      logger.error('Error while inserting to mothers:', e)
       return NextResponse.json({ error: String(e) }, { status: 500 })
     }
     if (error) {
-      console.error('save-result DB error:', error)
+      logger.error('save-result DB error:', error)
       return NextResponse.json({ error: error.message || error }, { status: 500 })
     }
 
     return NextResponse.json({ ok: true, recoveryCode, data })
   } catch (err: any) {
-    console.error('/api/save-result error:', err)
+    logger.error('/api/save-result error:', err)
     // Return detailed error info for debugging in dev (do not expose in prod)
     const info: any = {
       message: err?.message ?? String(err),

@@ -1,4 +1,5 @@
 "use client"
+import { logger } from '../logger';
 import { useMemo, useState, useEffect, useRef } from 'react'
 import { useSearchParams, useRouter } from 'next/navigation'
 import Header from '../components/Header'
@@ -236,7 +237,7 @@ export default function QuizPage() {
   const [questionListKey, setQuestionListKey] = useState(0)
 
   useEffect(() => {
-    console.log('Answers changed (effect):', answers)
+    logger.log('Answers changed (effect):', answers)
   }, [answers])
 
   const questions = allQuestions
@@ -250,10 +251,10 @@ export default function QuizPage() {
   }, [currentPage])
 
   const handleAnswer = (index: number, value: number) => {
-    console.log('handleAnswer called:', index, value)
+    logger.log('handleAnswer called:', index, value)
     setAnswers((prev) => {
       const newAnswers = { ...prev, [index]: value }
-      console.log('New answers:', newAnswers)
+      logger.log('New answers:', newAnswers)
       return newAnswers
     })
   }

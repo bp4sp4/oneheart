@@ -1,3 +1,4 @@
+import { logger } from '../../logger';
 import { NextResponse } from 'next/server'
 import { supabase } from '../../../lib/db' // Updated import
 
@@ -15,7 +16,7 @@ export async function POST(req: Request) {
       .maybeSingle()
 
     if (error) {
-      console.error('Supabase fetch question order error:', error)
+      logger.error('Supabase fetch question order error:', error)
       return NextResponse.json({ error: 'failed to fetch question order' }, { status: 500 })
     }
 
@@ -25,7 +26,7 @@ export async function POST(req: Request) {
 
     return NextResponse.json({ question_order: data.question_order })
   } catch (err: any) {
-    console.error('API /api/load-quiz-order POST Error:', err)
+    logger.error('API /api/load-quiz-order POST Error:', err)
     return NextResponse.json({ error: err?.message || 'failed' }, { status: 500 })
   }
 }
